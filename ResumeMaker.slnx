@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Core/ResumeMaker.Application/ResumeMaker.Application.csproj" />
+    <Project Path="Core/ResumeMaker.Domain/ResumeMaker.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Host/">
+    <Project Path="Host/ResumeMaker.API/ResumeMaker.API.csproj" />
+  </Folder>
+  <Folder Name="/Insfrastructure/">
+    <Project Path="Insfrastucture/ResumeMaker.Persistence/ResumeMaker.Persistence.csproj" />
+  </Folder>
+</Solution>
