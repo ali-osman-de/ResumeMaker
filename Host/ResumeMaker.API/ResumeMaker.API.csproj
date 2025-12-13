@@ -16,9 +16,11 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Extensions/" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../Insfrastucture/ResumeMaker.Persistence/ResumeMaker.Persistence.csproj" />
     <ProjectReference Include="..\..\Core\ResumeMaker.Application\ResumeMaker.Application.csproj" />
   </ItemGroup>
 

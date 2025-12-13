@@ -1,31 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ResumeMaker.Application.Interfaces.Repositories;
 using ResumeMaker.Domain.Entities.Base;
+using ResumeMaker.Persistence.Context;
 using System.Linq.Expressions;
 
 namespace ResumeMaker.Persistence.Repositories;
 
 public class ReadRepository<T> : IReadRepository<T> where T : CoreEntity
 {
-    public DbSet<T> Table => throw new NotImplementedException();
+    private readonly ResumeMakerDbContext _context;
 
-    public Task<List<T>> GetAll(CancellationToken cancellationToken)
+    public ReadRepository(ResumeMakerDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public DbSet<T> Table => _context.Set<T>();
 
-    public Task<T> GetSingleAsync(Expression<Func<T, bool>> method, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<List<T>> GetAll(CancellationToken cancellationToken) 
+        => await Table.ToListAsync(cancellationToken);
+
+    public async Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken) 
+        => await Table.FirstAsync(data => data.Id == id, cancellationToken);
+
+    public async Task<T> GetSingleAsync(Expression<Func<T, bool>> method, CancellationToken cancellationToken) 
+        => await Table.AsQueryable().Where(method).FirstAsync(cancellationToken);
 
     public List<T> GetWhere(Expression<Func<T, bool>> method)
-    {
-        throw new NotImplementedException();
-    }
+        => Table.Where(method).ToList();
 }

@@ -13,11 +13,17 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\ResumeMaker.Application\ResumeMaker.Application.csproj" />
+    <ProjectReference Include="../../Core/ResumeMaker.Application/ResumeMaker.Application.csproj" />
     <ProjectReference Include="..\..\Core\ResumeMaker.Domain\ResumeMaker.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions/" />
   </ItemGroup>
 
 </Project>

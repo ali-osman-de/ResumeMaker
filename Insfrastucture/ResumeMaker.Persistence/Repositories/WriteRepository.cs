@@ -1,40 +1,60 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.IO.Compression;
+using Microsoft.EntityFrameworkCore;
 using ResumeMaker.Application.Interfaces.Repositories;
 using ResumeMaker.Domain.Entities.Base;
+using ResumeMaker.Persistence.Context;
 
 namespace ResumeMaker.Persistence.Repositories;
 
 public class WriteRepository<T> : IWriteRepository<T> where T : CoreEntity
 {
-    public DbSet<T> Table => throw new NotImplementedException();
+    private readonly ResumeMakerDbContext _context;
 
-    public Task<bool> AddAsync(T model, CancellationToken cancellationToken)
+    public WriteRepository(ResumeMakerDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public Task<bool> AddRangeAsync(List<T> datas, CancellationToken cancellationToken)
+    public DbSet<T> Table => _context.Set<T>();
+
+    public async Task<bool> AddAsync(T model, CancellationToken cancellationToken) 
     {
-        throw new NotImplementedException();
+        await Table.AddAsync(model, cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> AddRangeAsync(List<T> datas, CancellationToken cancellationToken)
+    {
+        await Table.AddRangeAsync(datas, cancellationToken);
+        return true;
     }
 
     public bool Delete(T model)
     {
-        throw new NotImplementedException();
+        Table.Remove(model);
+        return true;
     }
 
-    public Task<bool> RemoveById(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> RemoveById(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var entity = await Table.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        if (entity != null)
+        {
+            Table.Remove(entity);
+            return true;
+        }
+        return false;
     }
 
     public bool RemoveRange(List<T> datas)
     {
-        throw new NotImplementedException();
+        Table.RemoveRange(datas);
+        return true;
     }
 
     public bool Update(T model)
     {
-        throw new NotImplementedException();
+        Table.Update(model);
+        return true;
     }
 }
