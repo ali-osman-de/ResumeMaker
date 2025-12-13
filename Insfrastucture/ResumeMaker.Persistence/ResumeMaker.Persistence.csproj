@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <Folder Include="Extensions/" />
+    <Folder Include="Migrations/" />
+    <Folder Include="Repositories/Resume/" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using ResumeMaker.Application.Interfaces.Token;
 using ResumeMaker.Domain.Dtos;
+using ResumeMaker.Domain.Entities;
 
 namespace ResumeMaker.Application.Services;
 
@@ -17,7 +19,7 @@ public class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public TokenInformationDto CreateAccessToken()
+    public TokenInformationDto CreateAccessToken(AppUser appUser)
     {
         TokenInformationDto  tokenInformationDto = new TokenInformationDto();
 
@@ -28,6 +30,12 @@ public class TokenService : ITokenService
         JwtSecurityToken jwtSecurityToken = new(
             audience: _configuration["Token:Audience"],
             issuer: _configuration["Token:Issuer"],
+            claims: new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, appUser.Id),
+                new Claim(ClaimTypes.Name, appUser.UserName ?? string.Empty),
+                new Claim(ClaimTypes.Email, appUser.Email ?? string.Empty)
+            },
             expires: tokenInformationDto.ExpirationDatetime,
             notBefore: DateTime.UtcNow,
             signingCredentials: signingCredentials

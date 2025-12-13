@@ -11,4 +11,6 @@ public class ResumeSum : CoreEntity
     public PersonalDetail? PersonalDetail { get; set; }
     public Guid? SummaryId { get; set; }
     public Summary? Summary { get; set; }
+    public string? AppUserId { get; set; }
+    public AppUser? AppUser { get; set; }
 }

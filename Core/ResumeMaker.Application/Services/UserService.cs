@@ -47,7 +47,7 @@ public class UserService : IUserService
 
         if (result.Succeeded)
         {
-            TokenInformationDto tokenInformationDto = _tokenService.CreateAccessToken();
+            TokenInformationDto tokenInformationDto = _tokenService.CreateAccessToken(appUser);
             await UpdateRefreshToken(tokenInformationDto.RefreshToken, appUser, tokenInformationDto.ExpirationDatetime, 15);
             return ServiceResult<TokenInformationDto>.Success(tokenInformationDto, "Giriş başarılı");
         }
@@ -61,7 +61,7 @@ public class UserService : IUserService
         if (appUser != null && appUser?.RefreshTokenExpiration > DateTime.UtcNow)
         {
             RefreshTokenInformationDto refreshTokenInformationDto = new RefreshTokenInformationDto();
-            TokenInformationDto tokenInformationDto = _tokenService.CreateAccessToken();
+            TokenInformationDto tokenInformationDto = _tokenService.CreateAccessToken(appUser);
             await UpdateRefreshToken(tokenInformationDto.RefreshToken, appUser, tokenInformationDto.ExpirationDatetime, 15);
             refreshTokenInformationDto.RefreshToken = tokenInformationDto.RefreshToken;
             return ServiceResult<RefreshTokenInformationDto>.Success(refreshTokenInformationDto);

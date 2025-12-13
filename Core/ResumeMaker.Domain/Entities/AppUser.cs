@@ -6,4 +6,5 @@ public class AppUser : IdentityUser<string>
 {
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiration { get; set; }
+    public ICollection<ResumeSum> ResumeSums { get; set; }
 }

@@ -28,6 +28,10 @@ namespace ResumeMaker.Persistence.Context
                 entity.HasOne(r => r.Summary)
                       .WithOne(s => s.ResumeSum)
                       .HasForeignKey<Summary>(s => s.ResumeSumId);
+
+                entity.HasOne(r => r.AppUser)
+                      .WithMany(u => u.ResumeSums)
+                      .HasForeignKey(r => r.AppUserId);
             });
         }
     }
