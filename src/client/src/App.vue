@@ -1,30 +1,26 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterView } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useAppStore } from './stores/app.store';
+
+const appStore = useAppStore();
+const { isLoading, error } = storeToRefs(appStore);
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+  <RouterView />
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+  <div
+    v-if="isLoading"
+    class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 text-white text-sm"
+  >
+    Yükleniyor...
+  </div>
+
+  <div
+    v-if="error"
+    class="fixed bottom-4 right-4 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 text-sm"
+  >
+    {{ error }}
+  </div>
+</template>
