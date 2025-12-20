@@ -19,25 +19,25 @@ namespace ResumeMaker.API.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] CreateUserCommand command)
+        public async Task<ActionResult<ServiceResult<bool>>> Register([FromBody] CreateUserCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return result;
         }   
 
         [HttpPost]
-        [ProducesResponseType(typeof(ServiceResult<TokenInformationDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
+        [ProducesResponseType(typeof(TokenInformationDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ServiceResult<TokenInformationDto>>> Login([FromBody] LoginUserCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result); 
+            return result;
         }
 
         [HttpPost]
-        public async Task<IActionResult> RefreshToken([FromBody] UpdateUserRefreshTokenCommand command)
+        public async Task<ActionResult<ServiceResult<RefreshTokenInformationDto>>> RefreshToken([FromBody] UpdateUserRefreshTokenCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return result;
         }
     }
 }

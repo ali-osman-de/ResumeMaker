@@ -29,7 +29,7 @@ public class ResumeService : IResumeService
     {
         if (string.IsNullOrWhiteSpace(_currentUser.UserId))
         {
-            return ServiceResult<bool>.Fail("Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.");
+            return ServiceResult<bool>.Fail(ResultStatus.Unauthorized, "Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.");
         }
 
         ResumeSum resumeSum = new ResumeSum
@@ -48,7 +48,7 @@ public class ResumeService : IResumeService
     {
         if (string.IsNullOrWhiteSpace(_currentUser.UserId))
         {
-            return ServiceResult<List<ResumeDto>>.Fail("Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.");
+            return ServiceResult<List<ResumeDto>>.Fail(ResultStatus.Unauthorized, "Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.");
         }
 
         var resumes = _resumeReadRepository.GetWhere(r => r.AppUserId == _currentUser.UserId, cancellationToken);
@@ -66,18 +66,18 @@ public class ResumeService : IResumeService
     {
         if (string.IsNullOrWhiteSpace(_currentUser.UserId))
         {
-            return ServiceResult<bool>.Fail("Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.");
+            return ServiceResult<bool>.Fail(ResultStatus.Unauthorized, "Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.");
         }
 
         if (!Guid.TryParse(ResumeSubId, out var resumeId))
         {
-            return ServiceResult<bool>.Fail("Geçersiz özgeçmiş kimliği.");
+            return ServiceResult<bool>.Fail(ResultStatus.ValidationError, "Geçersiz özgeçmiş kimliği.");
         }
 
         var resume = _resumeReadRepository.GetWhere(r => r.Id == resumeId && r.AppUserId == _currentUser.UserId, cancellationToken).FirstOrDefault();
         if (resume is null)
         {
-            return ServiceResult<bool>.Fail("Özgeçmiş bulunamadı.");
+            return ServiceResult<bool>.Fail(ResultStatus.NotFound, "Özgeçmiş bulunamadı.");
         }
 
         _resumeWriteRepository.Delete(resume);
@@ -90,18 +90,18 @@ public class ResumeService : IResumeService
     {
         if (string.IsNullOrWhiteSpace(_currentUser.UserId))
         {
-            return ServiceResult<bool>.Fail("Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.");
+            return ServiceResult<bool>.Fail(ResultStatus.Unauthorized, "Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.");
         }
 
         if (!Guid.TryParse(ResumeSubId, out var resumeId))
         {
-            return ServiceResult<bool>.Fail("Geçersiz özgeçmiş kimliği.");
+            return ServiceResult<bool>.Fail(ResultStatus.ValidationError, "Geçersiz özgeçmiş kimliği.");
         }
 
         var resume = _resumeReadRepository.GetWhere(r => r.Id == resumeId && r.AppUserId == _currentUser.UserId, cancellationToken).FirstOrDefault();
         if (resume is null)
         {
-            return ServiceResult<bool>.Fail("Özgeçmiş bulunamadı.");
+            return ServiceResult<bool>.Fail(ResultStatus.NotFound, "Özgeçmiş bulunamadı.");
         }
 
         resume.UpdatedAt = DateTime.UtcNow;

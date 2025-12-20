@@ -28,7 +28,31 @@
         <button
           type="button"
           class="text-white/70 hover:text-white transition-colors"
-          @click="dismiss"
+          @click="dismissError"
+          aria-label="Kapat"
+        >
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+    </div>
+  </Transition>
+
+  <Transition name="slide-up">
+    <div
+      v-if="success"
+      class="fixed bottom-4 left-4 z-50 max-w-sm rounded-xl border border-green-200/40 bg-green-600/90 px-4 py-3 shadow-lg text-white backdrop-blur"
+      role="status"
+    >
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined text-white mt-0.5">check_circle</span>
+        <div class="flex-1">
+          <p class="text-sm font-semibold">Başarılı</p>
+          <p class="text-sm text-white/90 mt-1 break-words">{{ success }}</p>
+        </div>
+        <button
+          type="button"
+          class="text-white/80 hover:text-white transition-colors"
+          @click="dismissSuccess"
           aria-label="Kapat"
         >
           <span class="material-symbols-outlined text-[18px]">close</span>
@@ -41,11 +65,10 @@
 <script setup lang="ts">
 import { useLoader } from "@/helpers/loader";
 
-const { loading, error, setError } = useLoader();
+const { loading, error, success, setError, setSuccess } = useLoader();
 
-function dismiss() {
-  setError(null);
-}
+const dismissError = () => setError(null);
+const dismissSuccess = () => setSuccess(null);
 </script>
 
 <style scoped>

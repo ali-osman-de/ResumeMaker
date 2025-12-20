@@ -1,30 +1,42 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { type CreateUserCommand, type LoginUserCommand } from "@/metadata";
+import { type CreateUserCommand, type LoginUserCommand, type TokenInformationDto } from "@/metadata";
 import { client } from "@/helpers/client";
+import { useLoader } from "@/helpers/loader";
 
 export const authStore = defineStore("auth", () => {
-    const userLoginInformation = ref<LoginUserCommand | null>(null); 
-    const userCreateInformation = ref<CreateUserCommand | null>(null);
+    const userLoginInformation = ref<TokenInformationDto | null>(null);
+    const userCreateInformation = ref<boolean | null>(null);
 
-    const loading = ref(false);
-    const error = ref<string | null>(null);
+    const { loading, error, success, startLoading, stopLoading, setError, setSuccess } = useLoader();
 
-    async function loginUser(userLoginInformation : LoginUserCommand) {
+    async function loginUser(loginInformation: LoginUserCommand) {
+        startLoading();
+        setError(null);
         try {
-            const res = await client.login(userLoginInformation);
-            return res;
-        } catch (error) {
-            return error;
+            const res = await client.login(loginInformation);
+            setSuccess("Giriş başarılı.");
+            return userLoginInformation.value = res;
+        } catch (err: any) {
+            setError(err?.message || "Giriş başarısız. Lütfen tekrar deneyin.");
+            throw err;
+        } finally {
+            stopLoading();
         }
     }
 
-    async function createUser(userCreateInformation : CreateUserCommand) {
+    async function createUser(createInformation: CreateUserCommand) {
+        startLoading();
+        setError(null);
         try {
-            const res = await client.register(userCreateInformation);
+            const res = await client.register(createInformation);
+            setSuccess("Kayıt başarılı.");
             return res;
-        } catch (error) {
-            return error;
+        } catch (err: any) {
+            setError(err?.message || "Kayıt başarısız. Lütfen tekrar deneyin.");
+            throw err;
+        } finally {
+            stopLoading();
         }
     }
 
@@ -32,6 +44,9 @@ export const authStore = defineStore("auth", () => {
         userLoginInformation,
         userCreateInformation,
         loginUser,
-        createUser
+        createUser,
+        loading,
+        error,
+        success
     }
 })

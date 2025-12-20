@@ -1,8 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResumeMaker.Application.Common;
 using ResumeMaker.Application.Features.Commands.Resume;
 using ResumeMaker.Application.Features.Queries;
+using ResumeMaker.Domain.Dtos;
 
 namespace ResumeMaker.API.Controllers
 {
@@ -19,28 +21,28 @@ namespace ResumeMaker.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateResumeSub([FromBody] CreateResumeCommand command)
+        public async Task<ActionResult<ServiceResult<bool>>> CreateResumeSub([FromBody] CreateResumeCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return result;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllResume()
+        public async Task<ActionResult<ServiceResult<List<ResumeDto>>>> GetAllResume()
         {
             var result = await _mediator.Send(new GetAllResumeQuery());
-            return Ok(result);
+            return result;
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateResume([FromBody] UpdateResumeCommand command)
+        public async Task<ActionResult<ServiceResult<bool>>> UpdateResume([FromBody] UpdateResumeCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return result;
         }
         [HttpPost]
-        public async Task<IActionResult> RemoveResume([FromQuery] string ResumeSubId)
+        public async Task<ActionResult<ServiceResult<bool>>> RemoveResume([FromQuery] string ResumeSubId)
         {
             var result = await _mediator.Send(new RemoveResumeCommand(ResumeSubId));
-            return Ok(result);
+            return result;
         }
     }
 }
