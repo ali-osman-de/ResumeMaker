@@ -2,34 +2,42 @@ using ResumeMaker.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var metadataOutputPath = Path.GetFullPath(
+    Path.Combine(builder.Environment.ContentRootPath, "../../../client/src/metadata.ts"));
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHostServices(builder.Configuration);
+builder.Services.AddHostServices(
+    builder.Configuration,
+    "http://localhost:5296/swagger/v1/swagger.json",
+    metadataOutputPath);
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddDefaultPolicy(x =>
+        x.WithOrigins("http://localhost:5173", "http://localhost:4173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(opt =>
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
     {
-        opt.RouteTemplate = "docs/{documentName}/swagger.json";
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger");
     });
-    app.UseSwaggerUI(x =>
-    {
-        x.DocumentTitle = "ResumeMaker";
-        x.RoutePrefix = "docs";
-        x.SwaggerEndpoint("/docs/v1/swagger.json", "My API v1");
-    });
-    app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseMetadataGenerator();
 app.Run();

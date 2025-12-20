@@ -8,10 +8,13 @@ namespace ResumeMaker.API.Extensions;
 
 public static class HostServiceExtensions
 {
-    public static void AddHostServices(this IServiceCollection services, IConfiguration configuration)
+    public static void AddHostServices(this IServiceCollection services, IConfiguration configuration, string swaggerUrl, string outputPath)
     {
         services.AddApplicationServices();
         services.AddPersistenceServices(configuration);
+
+        services.AddSingleton<IMetadataGenerator>(
+            new NswagMetadataGenerator(swaggerUrl, outputPath));
 
         services.AddAuthentication(options =>
         {

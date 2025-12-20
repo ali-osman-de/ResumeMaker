@@ -1,13 +1,17 @@
 <template>
-  <section class="glass-panel w-full max-w-[480px] rounded-2xl p-8 md:p-10 flex flex-col gap-8">
+  <section
+    class="w-full max-w-[480px] rounded-2xl p-8 md:p-10 flex flex-col gap-8 bg-[#120f23]/60 border border-white/10 backdrop-blur-[12px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
+  >
     <div class="flex flex-col gap-2 text-center">
       <h2 class="text-3xl font-bold text-white tracking-tight">Hoş Geldiniz</h2>
       <p class="text-[#9690cb] text-sm">Hayalindeki işe bir adım daha yaklaşmak için giriş yap.</p>
     </div>
 
     <button
-      class="group flex w-full items-center justify-center gap-3 rounded-xl bg-[#262249]/50 hover:bg-[#262249] border border-white/5 hover:border-white/10 p-3.5 transition-all duration-200"
+      class="group flex w-full items-center justify-center gap-3 rounded-xl bg-[#262249]/50 hover:bg-[#262249] border border-white/5 hover:border-white/10 p-3.5 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#262249]/50"
       type="button"
+      disabled
+      aria-disabled="true"
     >
       <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
@@ -15,7 +19,7 @@
         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
       </svg>
-      <span class="text-white font-medium text-sm">Google ile devam et</span>
+      <span class="text-white font-medium text-sm">Google ile devam et (yakında)</span>
     </button>
 
     <div class="flex items-center gap-3 w-full">
@@ -74,8 +78,9 @@
       </div>
 
       <button
-        class="glow-button mt-2 w-full bg-primary hover:bg-[#5b4ddb] text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 group"
+        class="mt-2 w-full bg-primary hover:bg-[#5b4ddb] text-white font-bold py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-[0_0_20px_rgba(110,94,247,0.5)]"
         type="submit"
+        :disabled="auth.loading"
       >
         <span>Giriş Yap</span>
         <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -92,8 +97,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { authStore } from "@/stores/authStore";
 
 const router = useRouter();
+const auth = authStore();
 const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
@@ -103,6 +110,13 @@ const togglePassword = () => {
 };
 
 async function login() {
-  await router.push("/app");
+  await auth.loginUser({
+    userNameOrEmail: email.value,
+    password: password.value
+  });
+
+  if (!auth.error) {
+    await router.push("/app");
+  }
 }
 </script>

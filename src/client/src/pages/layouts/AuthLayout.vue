@@ -1,7 +1,18 @@
 <template>
-  <div class="bg-background-dark text-white min-h-screen flex flex-col relative overflow-hidden font-body">
-    <div class="gradient-blob bg-primary w-[500px] h-[500px] rounded-full top-[-100px] left-[-100px] animate-pulse"></div>
-    <div class="gradient-blob bg-secondary-accent w-[400px] h-[400px] rounded-full bottom-[-50px] right-[-50px] opacity-30"></div>
+  <div class="relative min-h-screen flex flex-col overflow-hidden bg-background-dark text-white font-body">
+    <div class="pointer-events-none absolute inset-0">
+      <div class="absolute inset-0 bg-cover bg-center opacity-45" :style="{ backgroundImage: `url(${authLayoutBg})` }"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-background-dark/90 via-background-dark/85 to-background-dark"></div>
+    </div>
+
+    <div
+      class="pointer-events-none absolute -top-32 -left-32 h-[520px] w-[520px] rounded-full bg-primary blur-[140px] opacity-35"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="pointer-events-none absolute -bottom-28 -right-28 h-[440px] w-[440px] rounded-full bg-secondary-accent blur-[150px] opacity-25"
+      aria-hidden="true"
+    ></div>
 
     <header class="relative z-10 w-full px-8 py-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -15,7 +26,7 @@
             ></path>
           </svg>
         </div>
-        <h1 class="text-white text-xl font-bold tracking-tight">CV Creator</h1>
+        <h1 class="text-white text-xl font-bold tracking-tight">ResumeMaker</h1>
       </div>
       <div class="hidden md:block">
         <span class="text-[#9690cb] text-sm font-medium mr-2">{{ navPrompt }}</span>
@@ -28,20 +39,13 @@
     <main class="relative z-10 flex-1 flex items-center justify-center p-4">
       <RouterView />
     </main>
-
-    <div class="absolute bottom-0 w-full h-1/3 pointer-events-none z-0">
-      <img
-        class="w-full h-full object-cover opacity-30"
-        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWplV7zmx0zABzNzRUB6UTW9uyY-x5L-OzlPBxX34cD097d-rqrCfhWXldNJh_OdyiUKeVd_IEffyl_sZcQxMc5jKR19alfVgLwcaDVIE2TDCcIR5_49D1L0GrYjYcqFSYtau9u_nUdP354gR4oVJuQSJCodmNAh79ms7bcdNBNKpyzVXloRqb3OSkUAVdS1SSbe4EaRGRXHfB3KyNQNn50Jkg-m2hPIkaRkDz5GbdbvwA3yeB2Jd2zmklKT8CNsKXGMCYqljQrg"
-        alt="Dekoratif arka plan"
-      />
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import authLayoutBg from "@/assets/layouts/authlayout.png";
 
 const route = useRoute();
 
@@ -50,33 +54,3 @@ const navPrompt = computed(() => (isLogin.value ? "Hesabın yok mu?" : "Zaten he
 const navCta = computed(() => (isLogin.value ? "Kayıt Ol" : "Giriş Yap"));
 const navTarget = computed(() => (isLogin.value ? "/auth/signup" : "/auth/login"));
 </script>
-
-<style scoped>
-:global(body) {
-  font-family: "Inter", sans-serif;
-  background-color: #0b1220;
-}
-
-.gradient-blob {
-  position: absolute;
-  filter: blur(100px);
-  opacity: 0.4;
-  z-index: 0;
-}
-
-:global(.glass-panel) {
-  background: rgba(18, 16, 35, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-:global(.glow-button) {
-  transition: all 0.3s ease;
-}
-
-:global(.glow-button:hover) {
-  box-shadow: 0 0 20px rgba(110, 94, 247, 0.5);
-}
-</style>

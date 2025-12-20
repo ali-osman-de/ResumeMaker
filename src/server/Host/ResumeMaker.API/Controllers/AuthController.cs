@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ResumeMaker.Application.Common;
 using ResumeMaker.Application.Features.Commands;
 using ResumeMaker.Application.Features.Commands.User;
+using ResumeMaker.Domain.Dtos;
 
 namespace ResumeMaker.API.Controllers
 {
@@ -23,12 +25,15 @@ namespace ResumeMaker.API.Controllers
             return Ok(result);
         }   
 
+        [HttpPost]
+        [ProducesResponseType(typeof(ServiceResult<TokenInformationDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return Ok(result); 
         }
 
+        [HttpPost]
         public async Task<IActionResult> RefreshToken([FromBody] UpdateUserRefreshTokenCommand command)
         {
             var result = await _mediator.Send(command);

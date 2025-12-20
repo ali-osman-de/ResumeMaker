@@ -44,7 +44,7 @@ public class UserService : IUserService
         AppUser? appUser = await _userManager.FindByEmailAsync(userNameOrEmail);
         if (appUser == null) appUser = await _userManager.FindByNameAsync(userNameOrEmail);
 
-        if (appUser == null) return ServiceResult<TokenInformationDto>.Fail("Kullanıcı bulunamadı!");
+        if (appUser == null) return ServiceResult<TokenInformationDto>.Fail("Kullanıcı bulunamadı!", "KullanıcıBulunamadı");
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, password, false);
 
@@ -52,7 +52,7 @@ public class UserService : IUserService
         {
             TokenInformationDto tokenInformationDto = _tokenService.CreateAccessToken(appUser);
             await UpdateRefreshToken(tokenInformationDto.RefreshToken, appUser, tokenInformationDto.ExpirationDatetime, 15);
-            return ServiceResult<TokenInformationDto>.Success(tokenInformationDto, "Giriş başarılı");
+            return ServiceResult<TokenInformationDto>.Success(tokenInformationDto);
         }
 
         return ServiceResult<TokenInformationDto>.Fail("hatalı şifre veya username");
