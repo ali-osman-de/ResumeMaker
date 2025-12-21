@@ -1,44 +1,23 @@
-namespace ResumeMaker.Application.Common;
-
-public enum ResultStatus
+public class ServiceResult<T>
 {
-    Success,
-    NotFound,
-    Unauthorized,
-    ValidationError,
-    Conflict,
-    Error
-}
+    public bool IsSuccess { get; init; }
+    public string? Message { get; init; }
+    public IReadOnlyList<string> Errors { get; init; } = Array.Empty<string>();
+    public T? Data { get; init; }
 
-public class ServiceResult
-{
-    public bool IsSuccess { get; }
-    public ResultStatus Status { get; }
-    public string? Message { get; }
-    public IReadOnlyList<string> Errors { get; }
+    public static ServiceResult<T> Success(T? data = default, string? message = null)
+        => new ServiceResult<T>
+        {
+            IsSuccess = true,
+            Data = data,
+            Message = message
+        };
 
-    protected ServiceResult(bool isSuccess, ResultStatus status, string? message, IReadOnlyList<string>? errors)
-    {
-        IsSuccess = isSuccess;
-        Status = status;
-        Message = message;
-        Errors = errors ?? Array.Empty<string>();
-    }
-}
-
-public sealed class ServiceResult<T> : ServiceResult
-{
-    public T? Data { get; }
-
-    private ServiceResult(bool isSuccess, T? data, ResultStatus status, string? message, IReadOnlyList<string>? errors)
-        : base(isSuccess, status, message, errors)
-    {
-        Data = data;
-    }
-
-    public static ServiceResult<T> Success(T data, string? message = null)
-        => new(true, data, ResultStatus.Success, message, null);
-
-    public static ServiceResult<T> Fail(ResultStatus status, string message, params string[] errors)
-        => new(false, default, status, message, errors);
+    public static ServiceResult<T> Fail(string? message = null, params string[] errors)
+        => new ServiceResult<T>
+        {
+            IsSuccess = false,
+            Message = message,
+            Errors = errors?.Length > 0 ? errors : Array.Empty<string>()
+        };
 }

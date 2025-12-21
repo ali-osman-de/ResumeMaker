@@ -1,16 +1,11 @@
 using ResumeMaker.API.Extensions;
-using ResumeMaker.API.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var metadataOutputPath = Path.GetFullPath(
     Path.Combine(builder.Environment.ContentRootPath, "../../../client/src/metadata.ts"));
 
-builder.Services.AddScoped<ServiceResultActionFilter>();
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ServiceResultActionFilter>();
-});
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostServices(

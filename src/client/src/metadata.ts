@@ -63,7 +63,7 @@ export class Client {
      * @param body (optional) 
      * @return OK
      */
-    login(body: LoginUserCommand | undefined): Promise<TokenInformationDto> {
+    login(body: LoginUserCommand | undefined): Promise<TokenInformationDtoServiceResult> {
         let url_ = this.baseUrl + "/api/Auth/Login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -83,13 +83,13 @@ export class Client {
         });
     }
 
-    protected processLogin(response: Response): Promise<TokenInformationDto> {
+    protected processLogin(response: Response): Promise<TokenInformationDtoServiceResult> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TokenInformationDto;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TokenInformationDtoServiceResult;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -97,7 +97,7 @@ export class Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<TokenInformationDto>(null as any);
+        return Promise.resolve<TokenInformationDtoServiceResult>(null as any);
     }
 
     /**
@@ -302,11 +302,10 @@ export class Client {
 }
 
 export interface BooleanServiceResult {
-    readonly isSuccess?: boolean;
-    status?: ResultStatus;
-    readonly message?: string | undefined;
-    readonly errors?: string[] | undefined;
-    readonly data?: boolean;
+    isSuccess?: boolean;
+    message?: string | undefined;
+    errors?: string[] | undefined;
+    data?: boolean;
 }
 
 export interface CreateResumeCommand {
@@ -329,20 +328,10 @@ export interface RefreshTokenInformationDto {
 }
 
 export interface RefreshTokenInformationDtoServiceResult {
-    readonly isSuccess?: boolean;
-    status?: ResultStatus;
-    readonly message?: string | undefined;
-    readonly errors?: string[] | undefined;
+    isSuccess?: boolean;
+    message?: string | undefined;
+    errors?: string[] | undefined;
     data?: RefreshTokenInformationDto;
-}
-
-export enum ResultStatus {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
 }
 
 export interface ResumeDto {
@@ -352,17 +341,23 @@ export interface ResumeDto {
 }
 
 export interface ResumeDtoListServiceResult {
-    readonly isSuccess?: boolean;
-    status?: ResultStatus;
-    readonly message?: string | undefined;
-    readonly errors?: string[] | undefined;
-    readonly data?: ResumeDto[] | undefined;
+    isSuccess?: boolean;
+    message?: string | undefined;
+    errors?: string[] | undefined;
+    data?: ResumeDto[] | undefined;
 }
 
 export interface TokenInformationDto {
     accessToken?: string | undefined;
     refreshToken?: string | undefined;
     expirationDatetime?: Date;
+}
+
+export interface TokenInformationDtoServiceResult {
+    isSuccess?: boolean;
+    message?: string | undefined;
+    errors?: string[] | undefined;
+    data?: TokenInformationDto;
 }
 
 export interface UpdateResumeCommand {

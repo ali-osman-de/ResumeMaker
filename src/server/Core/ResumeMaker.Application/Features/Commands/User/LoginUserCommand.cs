@@ -1,5 +1,4 @@
 using MediatR;
-using ResumeMaker.Application.Common;
 using ResumeMaker.Domain.Dtos;
 
 namespace ResumeMaker.Application.Features.Commands.User;

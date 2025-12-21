@@ -1,4 +1,3 @@
-using ResumeMaker.Application.Common;
 using ResumeMaker.Domain.Dtos;
 
 namespace ResumeMaker.Application.Interfaces;

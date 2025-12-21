@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using ResumeMaker.Application.Common;
 using ResumeMaker.Application.Interfaces;
 using ResumeMaker.Domain.Dtos;
 using ResumeMaker.Domain.Entities;
@@ -36,7 +35,7 @@ public class UserService : IUserService
             return ServiceResult<bool>.Success(true);
         }
 
-        return ServiceResult<bool>.Fail(ResultStatus.Conflict, "Kullanıcı username veya email kullanımda!");
+        return ServiceResult<bool>.Fail("Kullanıcı username veya email kullanımda!");
     }
 
     public async Task<ServiceResult<TokenInformationDto>> LoginUserAsync(string userNameOrEmail, string password, CancellationToken cancellationToken)
@@ -44,7 +43,7 @@ public class UserService : IUserService
         AppUser? appUser = await _userManager.FindByEmailAsync(userNameOrEmail);
         if (appUser == null) appUser = await _userManager.FindByNameAsync(userNameOrEmail);
 
-        if (appUser == null) return ServiceResult<TokenInformationDto>.Fail(ResultStatus.NotFound, "Kullanıcı bulunamadı!", "KullanıcıBulunamadı");
+        if (appUser == null) return ServiceResult<TokenInformationDto>.Fail("Kullanıcı bulunamadı!");
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, password, false);
 
@@ -55,7 +54,7 @@ public class UserService : IUserService
             return ServiceResult<TokenInformationDto>.Success(tokenInformationDto);
         }
 
-        return ServiceResult<TokenInformationDto>.Fail(ResultStatus.Unauthorized, "hatalı şifre veya username", "GeçersizKimlik");
+        return ServiceResult<TokenInformationDto>.Fail("hatalı şifre veya username", "GeçersizKimlik");
     }
 
     public async Task<ServiceResult<RefreshTokenInformationDto>> RenewRefreshToken(string refreshToken, CancellationToken cancellation)
@@ -71,7 +70,7 @@ public class UserService : IUserService
         }
         else
         {
-            return ServiceResult<RefreshTokenInformationDto>.Fail(ResultStatus.Unauthorized, "UserBulunamadı veya Refresh Token süresi dolmuş", "RefreshTokenGeçersiz");
+            return ServiceResult<RefreshTokenInformationDto>.Fail( "UserBulunamadı veya Refresh Token süresi dolmuş", "RefreshTokenGeçersiz");
         }
     }
 

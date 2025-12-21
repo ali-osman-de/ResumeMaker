@@ -15,10 +15,22 @@ export const authStore = defineStore("auth", () => {
         setError(null);
         try {
             const res = await client.login(loginInformation);
+            const { isSuccess, data, message } = res ?? {};
+
+            if (!isSuccess || !data?.accessToken) {
+                throw new Error(message || "Giriş başarısız. Lütfen tekrar deneyin.");
+            }
+
+            localStorage.setItem("access_token", data.accessToken);
+            if (data.refreshToken) {
+                localStorage.setItem("refresh_token", data.refreshToken);
+            }
+
+            userLoginInformation.value = data as TokenInformationDto;
             setSuccess("Giriş başarılı.");
-            return userLoginInformation.value = res;
-        } catch (err: any) {
-            setError(err?.message || "Giriş başarısız. Lütfen tekrar deneyin.");
+            return data as TokenInformationDto;
+        } catch (err) {
+            setError("Giriş başarısız. Lütfen tekrar deneyin.");
             throw err;
         } finally {
             stopLoading();
@@ -32,8 +44,8 @@ export const authStore = defineStore("auth", () => {
             const res = await client.register(createInformation);
             setSuccess("Kayıt başarılı.");
             return res;
-        } catch (err: any) {
-            setError(err?.message || "Kayıt başarısız. Lütfen tekrar deneyin.");
+        } catch (err) {
+            setError("Kayıt başarısız. Lütfen tekrar deneyin.");
             throw err;
         } finally {
             stopLoading();

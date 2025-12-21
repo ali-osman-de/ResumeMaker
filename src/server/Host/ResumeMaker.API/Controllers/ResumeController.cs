@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResumeMaker.Application.Common;
 using ResumeMaker.Application.Features.Commands.Resume;
 using ResumeMaker.Application.Features.Queries;
 using ResumeMaker.Domain.Dtos;

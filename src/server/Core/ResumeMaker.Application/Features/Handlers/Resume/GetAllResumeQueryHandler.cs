@@ -1,5 +1,4 @@
 using MediatR;
-using ResumeMaker.Application.Common;
 using ResumeMaker.Application.Features.Queries;
 using ResumeMaker.Application.Interfaces;
 using ResumeMaker.Domain.Dtos;

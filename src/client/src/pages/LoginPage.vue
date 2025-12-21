@@ -96,10 +96,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { authStore } from "@/stores/authStore";
 
 const router = useRouter();
+const route = useRoute();
 const auth = authStore();
 const email = ref("");
 const password = ref("");
@@ -116,7 +117,8 @@ async function login() {
   });
 
   if (!auth.error) {
-    await router.push("/app");
+    const redirect = (route.query.redirect as string) || "/app/dashboard";
+    await router.push(redirect);
   }
 }
 </script>

@@ -1,14 +1,62 @@
 <template>
-  <div class="min-h-screen">
-    <header class="h-14 px-6 flex items-center border-b">
-      <nav class="flex gap-4">
-        <RouterLink to="/app">Dashboard</RouterLink>
-        <RouterLink to="/app/profile">Profil</RouterLink>
-      </nav>
+  <div class="relative min-h-screen overflow-hidden bg-[#0B1220] text-white">
+    
+    <div class="pointer-events-none absolute -left-36 -top-40 h-[420px] w-[420px] rounded-full bg-primary/20 blur-[120px]"></div>
+    <div class="pointer-events-none absolute -right-24 top-1/4 h-[360px] w-[360px] rounded-full bg-cyan-400/15 blur-[110px]"></div>
+
+
+    <header class="fixed top-0 z-50 w-full border-b border-[#1E293B] bg-[#0F1B2D]/80 backdrop-blur-xl">
+      <div class="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#6e5ef7] to-[#22D3EE] shadow-[0_0_20px_rgba(110,94,247,0.4)]"
+          >
+            <span class="material-symbols-outlined text-[22px] text-white">description</span>
+          </div>
+          <div class="leading-tight">
+            <p class="text-lg font-bold tracking-tight">
+              ResumeMaker
+            </p>
+            <p class="text-xs text-white/60">Dashboard</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div
+            class="hidden items-center gap-2 rounded-xl border border-[#1E293B] bg-[#0F1B2D] px-3.5 py-2.5 text-sm text-white/80 transition hover:border-[#6e5ef7] hover:text-white md:flex"
+          >
+            <span class="material-symbols-outlined text-[20px] text-white/60">help</span>
+            <span>Destek</span>
+          </div>
+          
+          <RouterLink
+            class="hidden items-center gap-2 rounded-xl border border-transparent bg-[#6e5ef7] px-3.5 py-2.5 text-sm font-semibold shadow-[0_0_20px_rgba(110,94,247,0.35)] transition hover:bg-[#5b4ce3] sm:flex"
+            to="/app/editor"
+          >
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            Yeni CV
+          </RouterLink>
+
+          <div class="flex items-center gap-3 rounded-xl border border-[#1E293B] bg-[#0F1B2D] px-3 py-2">
+            <div class="hidden text-right sm:block">
+              <p class="text-sm font-semibold">Alex Morgan</p>
+              <p class="text-xs text-white/60">Pro Plan</p>
+            </div>
+            <div
+              class="relative h-10 w-10 rounded-full border-2 border-[#1E293B] bg-cover bg-center"
+              style="background-image: url('https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=200&q=80');"
+            >
+              <span class="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-[#0B1220] bg-emerald-400"></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
 
-    <main class="p-6">
-      <RouterView />
+    <main class="pt-24 pb-12">
+      <div class="mx-auto max-w-6xl px-6">
+        <RouterView />
+      </div>
     </main>
   </div>
 </template>
