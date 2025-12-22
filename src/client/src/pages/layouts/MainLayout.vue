@@ -39,8 +39,8 @@
 
           <div class="flex items-center gap-3 rounded-xl border border-[#1E293B] bg-[#0F1B2D] px-3 py-2">
             <div class="hidden text-right sm:block">
-              <p class="text-sm font-semibold">Alex Morgan</p>
-              <p class="text-xs text-white/60">Pro Plan</p>
+              <p class="text-sm font-semibold">Ali Osman</p>
+              <p class="text-xs text-white/60">Deneme</p>
             </div>
             <div
               class="relative h-10 w-10 rounded-full border-2 border-[#1E293B] bg-cover bg-center"
