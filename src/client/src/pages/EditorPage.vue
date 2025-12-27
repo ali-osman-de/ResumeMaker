@@ -1,38 +1,35 @@
 <template>
-  <div class="relative flex w-full flex-col gap-6 lg:flex-row lg:gap-8">
+  <div
+    ref="paneContainer"
+    class="relative flex w-full flex-col items-start gap-4 lg:flex-row lg:items-start lg:gap-3"
+  >
     <div class="pointer-events-none absolute -left-24 -top-16 h-72 w-72 rounded-full bg-primary/15 blur-[120px]"></div>
     <div class="pointer-events-none absolute -right-16 top-24 h-64 w-64 rounded-full bg-cyan-400/10 blur-[110px]"></div>
     <section
-      class="w-full rounded-2xl border border-[#1E293B] bg-[#0F1B2D]/80 shadow-[0_24px_80px_-50px_rgba(0,0,0,0.8)] backdrop-blur lg:basis-[55%]"
+      class="w-full rounded-2xl border border-[#1E293B] bg-[#0F1B2D]/80 shadow-[0_24px_80px_-50px_rgba(0,0,0,0.8)] backdrop-blur lg:min-h-[720px]"
+      :style="leftPaneStyle"
     >
-      <div class="px-6 pt-6 pb-2 shrink-0">
-        <nav class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+      <div class="px-4 pt-6 pb-2 shrink-0">
+        <nav class="flex flex-wrap gap-3 overflow-x-auto no-scrollbar pb-2">
           <button
-            class="whitespace-nowrap px-4 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20 text-sm font-medium transition-colors"
+            class="whitespace-nowrap px-5 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20 text-sm font-medium transition-colors"
           >
             İçerik
-          </button>
-          <button
-            class="whitespace-nowrap px-4 py-2 rounded-lg hover:bg-white/5 text-text-muted hover:text-white text-sm font-medium transition-colors"
-          >
-            Tasarım
-          </button>
-          <button
-            class="whitespace-nowrap px-4 py-2 rounded-lg hover:bg-white/5 text-text-muted hover:text-white text-sm font-medium transition-colors"
-          >
-            Şablonlar
           </button>
         </nav>
       </div>
 
-      <div class="custom-scroll flex-1 overflow-y-auto px-6 pb-20 pt-2 space-y-4">
+      <div class="custom-scroll flex-1 overflow-y-auto px-4 pb-20 pt-2 space-y-4">
         <!-- Progress Bar -->
         <div class="group relative mb-6 flex h-2 w-full items-center overflow-hidden rounded-full bg-[#162032]">
-          <div class="h-full w-[65%] rounded-full bg-gradient-to-r from-primary to-[#22D3EE] shadow-[0_0_10px_rgba(34,211,238,0.5)]"></div>
+          <div
+            class="h-full rounded-full bg-gradient-to-r from-primary to-[#22D3EE] shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-all duration-300"
+            :style="{ width: progressWidth }"
+          ></div>
           <div
             class="absolute right-2 text-[10px] text-text-muted opacity-0 transition-opacity group-hover:opacity-100"
           >
-            CV Doluluk Oranı: %65
+            CV Doluluk Oranı: %{{ Math.round(completionRatio * 100) }}
           </div>
         </div>
 
@@ -820,20 +817,141 @@
       </div>
     </section>
 
-    <section
-      class="w-full rounded-2xl border border-[#1E293B] bg-[#0F1B2D]/80 p-6 text-white shadow-[0_24px_80px_-50px_rgba(0,0,0,0.8)] backdrop-blur lg:basis-[45%]"
-    >
+    <div class="hidden items-stretch lg:flex">
       <div
-        class="flex min-h-[320px] items-center justify-center rounded-2xl border border-dashed border-[#1E293B] bg-gradient-to-br from-[#0b1220] via-[#101a2e] to-[#0b1220] p-8 text-center text-white/70"
+        class="group relative flex w-4 cursor-col-resize items-center"
+        @mousedown="startSplitDrag"
+        @touchstart.prevent="startSplitDrag"
       >
-        Editör entegrasyonu bu alana gömülecek. Sağ panel genişletildi; oran korunarak daha ferah görünüm sağlandı.
+        <div class="mx-auto h-14 w-[3px] rounded-full bg-white/20 transition group-hover:bg-primary"></div>
+        <div
+          class="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-white/5 transition group-hover:bg-primary/40"
+          :class="{ 'bg-primary/60 shadow-[0_0_0_4px_rgba(110,94,247,0.2)]': isDraggingSplit }"
+        ></div>
+      </div>
+    </div>
+
+    <section
+      class="flex w-full flex-col rounded-2xl border border-[#1E293B] bg-[#0F1B2D]/80 p-4 text-white shadow-[0_24px_80px_-50px_rgba(0,0,0,0.8)] backdrop-blur lg:min-h-[720px]"
+      :style="rightPaneStyle"
+    >
+      <div class="flex h-full flex-col gap-4">
+        <header class="flex items-center justify-between gap-3 border-b border-[#1E293B] pb-3">
+          <h3 class="text-sm font-semibold text-white">Canlı Önizleme</h3>
+        </header>
+
+        <div class="custom-scroll overflow-auto rounded-2xl border border-[#1E293B] bg-gradient-to-br from-[#0b1220] via-[#101a2e] to-[#0b1220] p-4">
+          <div class="mx-auto w-full max-w-none rounded-xl bg-white p-10 shadow-lg resume-preview resume-paper">
+            <header class="mb-8 text-center">
+              <h1 class="resume-title">{{ contact.firstName }} {{ contact.lastName }}</h1>
+              <div class="resume-contact">
+                <a v-if="contact.email" :href="`mailto:${contact.email}`">{{ contact.email }}</a>
+                <template v-if="contact.email"> | </template>
+                <span v-if="contact.phone">{{ contact.phone }}</span>
+                <template v-if="contact.phone && contact.location"> | </template>
+                <span v-if="contact.location">{{ contact.location }}</span>
+                <template v-if="contact.githubUrl"> | </template>
+                <a v-if="contact.githubUrl" :href="contact.githubUrl" target="_blank">Github</a>
+                <template v-if="contact.linkedinUrl"> | </template>
+                <a v-if="contact.linkedinUrl" :href="contact.linkedinUrl" target="_blank">Linkedin</a>
+              </div>
+            </header>
+
+            <div class="resume-stack">
+              <section class="resume-section">
+                <h2>ÖZGEÇMİŞ</h2>
+                <p v-if="summaryText.trim()">
+                  {{ summaryText }}
+                </p>
+                <p v-else class="italic text-text-muted">Özgeçmiş metni henüz eklenmedi.</p>
+              </section>
+
+              <section class="resume-section">
+                <h2>TEKNİK BİLGİLER</h2>
+                <div class="resume-bullets">
+                  <div v-for="(cat, idx) in technicalCategories" :key="idx" class="resume-bullet-line">
+                    <span class="resume-bullet-title">{{ cat.title }}:</span>
+                    <span class="resume-bullet-text">
+                      {{ cat.skills.map((s) => s.name + (s.level ? ` (${s.level})` : "")).join(", ") || "..." }}
+                    </span>
+                  </div>
+                </div>
+              </section>
+
+              <section class="resume-section">
+                <h2>İŞ DENEYİMİ</h2>
+                <div class="resume-entry" v-for="(exp, idx) in experiences" :key="idx">
+                  <div class="resume-entry-header">
+                    <span class="resume-entry-title">{{ exp.role || "Pozisyon" }} | {{ exp.company || "Şirket" }}</span>
+                    <span class="resume-entry-meta">{{ exp.period || "" }}</span>
+                  </div>
+                  <ul class="resume-entry-list">
+                    <li v-for="(bullet, bIdx) in exp.bullets" :key="bIdx">{{ bullet }}</li>
+                  </ul>
+                </div>
+              </section>
+
+              <section class="resume-section">
+                <h2>EĞİTİM BİLGİLERİ</h2>
+                <div class="resume-entry" v-for="(edu, idx) in education" :key="idx">
+                  <div class="resume-entry-header">
+                    <span class="resume-entry-title">{{ edu.school }}</span>
+                    <span class="resume-entry-meta">{{ edu.year }}</span>
+                  </div>
+                  <div class="resume-entry-sub">{{ edu.degree }}</div>
+                  <div v-if="edu.gpa" class="resume-entry-sub">GPA: {{ edu.gpa }}</div>
+                </div>
+              </section>
+
+              <section class="resume-section">
+                <h2>YAZILIM PROJELERİM</h2>
+                <div class="resume-entry" v-for="(proj, idx) in projects" :key="idx">
+                  <div class="resume-entry-header">
+                    <span class="resume-entry-title">{{ proj.name }}</span>
+                    <span class="resume-entry-meta">
+                      <a v-if="proj.link" :href="proj.link" target="_blank">{{ proj.link }}</a>
+                    </span>
+                  </div>
+                  <ul class="resume-entry-list">
+                    <li v-for="(b, bIdx) in proj.bullets" :key="bIdx">{{ b }}</li>
+                  </ul>
+                </div>
+              </section>
+
+              <section v-if="volunteerWorks.length" class="resume-section">
+                <h2>GÖNÜLLÜ ÇALIŞMALAR</h2>
+                <div class="resume-entry" v-for="(vol, idx) in volunteerWorks" :key="idx">
+                  <div class="resume-entry-header">
+                    <span class="resume-entry-title">{{ vol.role }} | {{ vol.org }}</span>
+                    <span class="resume-entry-meta">{{ vol.years }}</span>
+                  </div>
+                  <ul class="resume-entry-list">
+                    <li v-for="(b, bIdx) in vol.bullets" :key="bIdx">{{ b }}</li>
+                  </ul>
+                </div>
+              </section>
+
+              <div class="resume-page-break"></div>
+
+              <section class="resume-section">
+                <h2>SERTİFİKALAR</h2>
+                <ul class="resume-entry-list">
+                  <li v-for="(cert, idx) in certificates" :key="idx">
+                    <a v-if="cert.link" :href="cert.link" target="_blank">{{ cert.name }}</a>
+                    <span v-else>{{ cert.name }}</span>
+                  </li>
+                </ul>
+              </section>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onBeforeUnmount, ref } from "vue";
 
 type TechnicalSkill = {
   name: string;
@@ -855,50 +973,94 @@ type Experience = {
   newBullet?: string;
 };
 
-const contact = ref({
-  firstName: "Ali Osman",
-  lastName: "Demirkollu",
-  email: "demirkolluosmanali@gmail.com",
-  phone: "(533) 406-9864",
-  location: "Başakşehir, Istanbul",
-  githubUrl: "https://github.com/demirkolluosmanali",
-  linkedinUrl: "https://www.linkedin.com/in/demirkolluosmanali",
+const paneContainer = ref<HTMLElement | null>(null);
+const paneRatio = ref(50);
+const isDraggingSplit = ref(false);
+const minPane = 40;
+const maxPane = 60;
+
+const leftPaneStyle = computed(() => ({
+  flexBasis: `${paneRatio.value}%`,
+  flexGrow: 0,
+}));
+
+const rightPaneStyle = computed(() => {
+  const right = 100 - paneRatio.value;
+  return {
+    flexBasis: `${right}%`,
+    flexGrow: 0,
+  };
 });
 
-const experiences = ref<Experience[]>([
-  {
-    role: "Asistan Öğrenci",
-    company: "Yıldız Teknik Üniversitesi",
-    period: "Kas 2022 – Mar 2023",
-    bullets: [
-      "Akademisyenlerle takım çalışması yaparak araştırma projeleri ve akademik görevleri yürüttüm.",
-      "Bilgisayar laboratuvarlarının denetlenmesi, yazılım yüklemeleri ve sınav süreçlerinde teknik destek sağladım.",
-      "Öğrencilerle aktif iletişim kurarak yönlendirme ve danışmanlık verdim.",
-    ],
-  },
-]);
+const completionRatio = computed(() => {
+  const checks = [
+    Object.values(contact.value).some((v) => `${v ?? ""}`.trim()),
+    summaryText.value.trim().length > 0,
+    technicalCategories.value.some((c) => c.skills.length > 0),
+    experiences.value.length > 0,
+    education.value.length > 0,
+    projects.value.length > 0,
+    volunteerWorks.value.length > 0,
+    certificates.value.length > 0,
+  ];
+  const filled = checks.filter(Boolean).length;
+  return checks.length ? filled / checks.length : 0;
+});
 
-const technicalCategories = ref<TechnicalCategory[]>([
-  {
-    title: "Programming Languages",
-    skills: [
-      { name: "Python", level: "Orta Derece" },
-      { name: "Reactjs", level: "Orta Derece" },
-      { name: "C#", level: "Orta Derece" },
-      { name: "Java", level: "Orta Derece" },
-    ],
-  },
-  {
-    title: "Databases and Cloud Technologies",
-    skills: [
-      { name: "SQL", level: "Orta Derece" },
-      { name: "SQLite", level: "Orta Derece" },
-      { name: "DBeaver", level: "Orta Derece" },
-      { name: "Git", level: "Orta Derece" },
-      { name: "Firebase", level: "Orta Derece" },
-    ],
-  },
-]);
+const progressWidth = computed(() => `${Math.max(0, Math.min(1, completionRatio.value)) * 100}%`);
+
+onBeforeUnmount(() => {
+  stopSplitDrag();
+});
+
+const getClientX = (event: MouseEvent | TouchEvent) =>
+  "touches" in event ? event.touches[0]?.clientX ?? 0 : event.clientX;
+
+const handleSplitDrag = (event: MouseEvent | TouchEvent) => {
+  if (!isDraggingSplit.value || !paneContainer.value) return;
+  const rect = paneContainer.value.getBoundingClientRect();
+  if (!rect.width) return;
+  const x = getClientX(event);
+  const percent = ((x - rect.left) / rect.width) * 100;
+  const clamped = Math.min(maxPane, Math.max(minPane, percent));
+  paneRatio.value = Math.round(clamped * 10) / 10;
+};
+
+const stopSplitDrag = () => {
+  if (!isDraggingSplit.value) return;
+  isDraggingSplit.value = false;
+  document.body.style.userSelect = "";
+  document.body.style.cursor = "";
+  window.removeEventListener("mousemove", handleSplitDrag);
+  window.removeEventListener("mouseup", stopSplitDrag);
+  window.removeEventListener("touchmove", handleSplitDrag);
+  window.removeEventListener("touchend", stopSplitDrag);
+};
+
+const startSplitDrag = (event: MouseEvent | TouchEvent) => {
+  event.preventDefault();
+  isDraggingSplit.value = true;
+  document.body.style.userSelect = "none";
+  document.body.style.cursor = "col-resize";
+  window.addEventListener("mousemove", handleSplitDrag);
+  window.addEventListener("mouseup", stopSplitDrag);
+  window.addEventListener("touchmove", handleSplitDrag);
+  window.addEventListener("touchend", stopSplitDrag);
+};
+
+const contact = ref({
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  location: "",
+  githubUrl: "",
+  linkedinUrl: "",
+});
+
+const experiences = ref<Experience[]>([]);
+
+const technicalCategories = ref<TechnicalCategory[]>([]);
 
 const newCategoryTitle = ref("");
 const addTechnicalCategory = () => {
@@ -986,20 +1148,7 @@ type Certificate = {
   link: string;
 };
 
-const education = ref<EducationItem[]>([
-  {
-    school: "Yıldız Teknik Üniversitesi",
-    year: "3. sınıf",
-    degree: "Lisans - Bilgisayar ve Öğretim Teknolojileri Eğitimi",
-    gpa: "3.0",
-  },
-  {
-    school: "Howard Community College, MD",
-    year: "",
-    degree: "ESL – English as a Second Language",
-    gpa: "",
-  },
-]);
+const education = ref<EducationItem[]>([]);
 
 const addEducation = () => {
   education.value.push({
@@ -1014,26 +1163,7 @@ const removeEducation = (idx: number) => {
   education.value.splice(idx, 1);
 };
 
-const volunteerWorks = ref<VolunteerWork[]>([
-  {
-    role: "Sosyal Medya ve Tasarım Ekip Üyesi",
-    org: "Mint Öğrenci Kulübü",
-    years: "2021-2023",
-    bullets: [
-      "Illustrator, Photoshop, InDesign ve Canva ile posterler ve Instagram gönderileri tasarladım.",
-      "E-dergi için içerik üretimi yaptım.",
-    ],
-  },
-  {
-    role: "Sekreter",
-    org: "Eğitim ve Bilişim Teknolojileri Kulübü",
-    years: "2022-2023",
-    bullets: [
-      "Toplantıları koordine ederek gerekli belge ve formları hazırladım.",
-      "Üniversite ile kulüp arasındaki iletişimi yürüttüm.",
-    ],
-  },
-]);
+const volunteerWorks = ref<VolunteerWork[]>([]);
 
 const addVolunteer = () => {
   volunteerWorks.value.push({
@@ -1063,13 +1193,7 @@ const removeVolunteerBullet = (vIdx: number, bIdx: number) => {
   vol.bullets.splice(bIdx, 1);
 };
 
-const projects = ref<Project[]>([
-  {
-    name: "CV Builder",
-    link: "https://example.com/cv",
-    bullets: ["Form tabanlı veri girişleri", "PDF export desteği", "Şablon yönetimi"],
-  },
-]);
+const projects = ref<Project[]>([]);
 
 const newProject = ref<Project>({
   name: "",
@@ -1106,10 +1230,7 @@ const removeProjectBullet = (projIdx: number, bulletIdx: number) => {
   proj.bullets.splice(bulletIdx, 1);
 };
 
-const certificates = ref<Certificate[]>([
-  { name: "Crash Course on Python – Coursera", link: "" },
-  { name: "An Introduction to Interactive Programming in Python", link: "" },
-]);
+const certificates = ref<Certificate[]>([]);
 
 const newCertificate = ref<Certificate>({
   name: "",
@@ -1151,6 +1272,100 @@ const summaryText = ref("");
 }
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background: #334155;
+}
+
+.resume-preview {
+  color: #0f172a;
+  font-family: "Times New Roman", Georgia, Cambria, "Times New Roman", serif;
+  line-height: 1.55;
+}
+
+.resume-paper {
+  border: 1px solid #e2e8f0;
+}
+
+.resume-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.resume-page-break {
+  height: 12px;
+  border-top: 1px dashed #cbd5e1;
+  margin: 4px 0 8px;
+}
+
+.resume-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.resume-contact {
+  margin-top: 6px;
+  color: #1d4ed8;
+  font-size: 13px;
+}
+
+.resume-contact a {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.resume-section {
+  margin-bottom: 18px;
+}
+
+.resume-section h2 {
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  color: #1f3c88;
+  font-weight: 800;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.resume-section p {
+  font-size: 13px;
+  margin: 0;
+}
+
+.resume-bullet-line {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.resume-bullet-title {
+  font-weight: 700;
+}
+
+.resume-entry {
+  margin-bottom: 12px;
+}
+
+.resume-entry-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.resume-entry-sub {
+  font-size: 13px;
+  font-style: italic;
+  color: #1f2937;
+}
+
+.resume-entry-list {
+  margin: 4px 0 0 16px;
+  padding: 0;
+  list-style: disc;
+  font-size: 13px;
+}
+
+.resume-entry-list li {
+  margin-bottom: 4px;
 }
 
 :global(.custom-input) {
