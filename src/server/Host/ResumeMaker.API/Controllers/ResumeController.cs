@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResumeMaker.API.Common;
 using ResumeMaker.Application.Features.Commands.Resume;
 using ResumeMaker.Application.Features.Queries;
 using ResumeMaker.Domain.Dtos;
@@ -23,25 +24,25 @@ namespace ResumeMaker.API.Controllers
         public async Task<ActionResult<ServiceResult<bool>>> CreateResumeSub([FromBody] CreateResumeCommand command)
         {
             var result = await _mediator.Send(command);
-            return result;
+            return result.ToResult();
         }
         [HttpGet]
         public async Task<ActionResult<ServiceResult<List<ResumeDto>>>> GetAllResume()
         {
             var result = await _mediator.Send(new GetAllResumeQuery());
-            return result;
+            return result.ToResult();
         }
         [HttpPost]
         public async Task<ActionResult<ServiceResult<bool>>> UpdateResume([FromBody] UpdateResumeCommand command)
         {
             var result = await _mediator.Send(command);
-            return result;
+            return result.ToResult();
         }
         [HttpPost]
         public async Task<ActionResult<ServiceResult<bool>>> RemoveResume([FromQuery] string ResumeSubId)
         {
             var result = await _mediator.Send(new RemoveResumeCommand(ResumeSubId));
-            return result;
+            return result.ToResult();
         }
     }
 }
