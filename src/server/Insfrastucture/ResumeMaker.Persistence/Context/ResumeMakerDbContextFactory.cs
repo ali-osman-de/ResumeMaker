@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 
 namespace ResumeMaker.Persistence.Context;
 
@@ -8,11 +7,9 @@ public class ResumeMakerDbContextFactory : IDesignTimeDbContextFactory<ResumeMak
 {
     public ResumeMakerDbContext CreateDbContext(string[] args)
     {
+        var optionsBuilder = new DbContextOptionsBuilder<ResumeMakerDbContext>()
+            .UseNpgsql("Host=localhost;Port=5432;Database=resumemaker;Username=resumemaker;Password=resumemaker;");
 
-
-        var optionsBuilder = new DbContextOptionsBuilder<ResumeMakerDbContext>()    
-                                 .UseSqlServer("Server=localhost,1453;Database=ResumeMakerDb;User Id=SA;Password=Str0ng_Pass!;TrustServerCertificate=True;");
-                                 
         return new ResumeMakerDbContext(optionsBuilder.Options);
     }
 }

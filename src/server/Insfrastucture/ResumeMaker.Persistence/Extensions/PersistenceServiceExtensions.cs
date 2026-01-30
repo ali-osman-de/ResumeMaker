@@ -16,7 +16,7 @@ public static class PersistenceServiceExtensions
     public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ResumeMakerDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultDocker")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultDocker")));
         
         services.AddIdentityCore<AppUser>().AddRoles<AppRole>()
                                            .AddSignInManager<SignInManager<AppUser>>()
