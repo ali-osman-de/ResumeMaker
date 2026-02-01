@@ -11,6 +11,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Dtos/SectionCertificate/" />
+    <Folder Include="Dtos/SectionEducation/" />
+    <Folder Include="Dtos/SectionJob/" />
+    <Folder Include="Dtos/SectionProjects/" />
+    <Folder Include="Dtos/SectionVolunteer/" />
+    <Folder Include="Entities/Certificates/" />
+    <Folder Include="Entities/Educations/" />
+    <Folder Include="Entities/Jobs/" />
+    <Folder Include="Entities/Projects/" />
+    <Folder Include="Entities/Skills/" />
+    <Folder Include="Entities/Volunteers/" />
     <Folder Include="Enums/" />
   </ItemGroup>
 

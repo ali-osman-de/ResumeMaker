@@ -131,6 +131,125 @@ export class Client {
         }
         return Promise.resolve<void>(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    createResume(body: ResumeCreateCommand | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Resume/CreateResume";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateResume(_response);
+        });
+    }
+
+    protected processCreateResume(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    updateResume(body: ResumeUpdateCommand | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Resume/UpdateResume";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateResume(_response);
+        });
+    }
+
+    protected processUpdateResume(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    removeResume(body: ResumeRemoveCommand | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Resume/RemoveResume";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoveResume(_response);
+        });
+    }
+
+    protected processRemoveResume(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+}
+
+export interface CertificatesInfoDto {
+    name?: string | undefined;
+    link?: string | undefined;
 }
 
 export interface CreateUserCommand {
@@ -139,13 +258,92 @@ export interface CreateUserCommand {
     password?: string | undefined;
 }
 
+export interface EducationInfoDto {
+    colleageName?: string | undefined;
+    departmantAndMajor?: string | undefined;
+    grade?: string | undefined;
+    gpa?: number | undefined;
+}
+
+export interface JobDescriptionDto {
+    description?: string | undefined;
+}
+
+export interface JobHistoryDto {
+    role?: string | undefined;
+    startEndPeriod?: string | undefined;
+    company?: string | undefined;
+    jobDescriptionDtos?: JobDescriptionDto[] | undefined;
+}
+
 export interface LoginUserCommand {
     userNameOrEmail?: string | undefined;
     password?: string | undefined;
 }
 
+export interface ProjectDefinitionsDto {
+    explaining?: string | undefined;
+}
+
+export interface ProjectsInfoDto {
+    name?: string | undefined;
+    link?: string | undefined;
+    projectDefinitionsDtos?: ProjectDefinitionsDto[] | undefined;
+}
+
+export interface ResumeCreateCommand {
+    saveResumeDto?: SaveResumeDto;
+}
+
+export interface ResumeRemoveCommand {
+    resumeId?: string;
+}
+
+export interface ResumeUpdateCommand {
+    resumeId?: string;
+    saveResumeDto?: SaveResumeDto;
+}
+
+export interface SaveResumeDto {
+    name?: string | undefined;
+    surname?: string | undefined;
+    email?: string | undefined;
+    cellPhone?: number | undefined;
+    location?: string | undefined;
+    githubLink?: string | undefined;
+    linkedinLink?: string | undefined;
+    autobiography?: string | undefined;
+    skillCategoryDtos?: SkillCategoryDto[] | undefined;
+    jobHistoryDtos?: JobHistoryDto[] | undefined;
+    educationInfoDtos?: EducationInfoDto[] | undefined;
+    projectsInfoDtos?: ProjectsInfoDto[] | undefined;
+    volunteerInfoDtos?: VolunteerInfoDto[] | undefined;
+    certificatesInfoDtos?: CertificatesInfoDto[] | undefined;
+}
+
+export interface SkillCategoryDto {
+    name?: string | undefined;
+    skills?: SkillDto[] | undefined;
+}
+
+export interface SkillDto {
+    technology?: string | undefined;
+    level?: string | undefined;
+}
+
 export interface UpdateUserRefreshTokenCommand {
     refreshToken?: string | undefined;
+}
+
+export interface VolunteerDescriptionDto {
+    explaining?: string | undefined;
+}
+
+export interface VolunteerInfoDto {
+    role?: string | undefined;
+    company?: string | undefined;
+    year?: number;
+    volunteerDescriptionDtos?: VolunteerDescriptionDto[] | undefined;
 }
 
 export class ApiException extends Error {

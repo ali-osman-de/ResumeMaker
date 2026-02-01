@@ -18,6 +18,7 @@
   <ItemGroup>
     <Folder Include="Common/" />
     <Folder Include="Extensions/" />
+    <Folder Include="Features/Commands/Resume/" />
     <Folder Include="Features/Queries/" />
     <Folder Include="Features\Commands\" />
     <Folder Include="Features\Handlers\" />
