@@ -1,23 +1,121 @@
-public class ServiceResult<T>
+using System.Net;
+using System.Text.Json.Serialization;
+using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
+
+public class ServiceResult
 {
-    public bool IsSuccess { get; init; }
-    public string? Message { get; init; }
-    public IReadOnlyList<string> Errors { get; init; } = Array.Empty<string>();
-    public T? Data { get; init; }
+    [JsonIgnore]
+    public HttpStatusCode Status { get; set; }
+    public ProblemDetails? Fail { get; set; }
 
-    public static ServiceResult<T> Success(T? data = default, string? message = null)
-        => new ServiceResult<T>
+    [JsonIgnore]
+    public bool isSuccess => Fail is null;
+    
+    [JsonIgnore]
+    public bool isFail => !isSuccess;
+
+
+    public static ServiceResult SuccessAsNoContent()
+    {
+        return new ServiceResult
         {
-            IsSuccess = true,
-            Data = data,
-            Message = message
+            Status = HttpStatusCode.NoContent
+        };
+    }
+    public static ServiceResult ErrorAsNotFound()
+    {
+        return new ServiceResult
+        {
+            Status = HttpStatusCode.NotFound,
+            Fail = new ProblemDetails
+            {
+                Title = "Not Found",
+                Detail = "Source was not found!"
+            }
+        };
+    }
+    public static ServiceResult Error(ProblemDetails problemDetails, HttpStatusCode statusCode)
+    {
+        return new ServiceResult()
+        {
+            Fail = problemDetails,
+            Status = statusCode
         };
 
-    public static ServiceResult<T> Fail(string? message = null, params string[] errors)
-        => new ServiceResult<T>
+    }
+    public static ServiceResult Error(string title, string description, HttpStatusCode statusCode)
+    {
+        return new ServiceResult()
         {
-            IsSuccess = false,
-            Message = message,
-            Errors = errors?.Length > 0 ? errors : Array.Empty<string>()
+            Fail = new ProblemDetails
+            {
+                Title = title,
+                Detail = description,
+                Status = statusCode.GetHashCode()
+            },
+            Status = statusCode
         };
+
+    }
+    public static ServiceResult ErrorFromValidaton(Dictionary<string, object?> errors)
+    {
+        return new ServiceResult()
+        {
+            Fail = new ProblemDetails
+            {
+                Title = "Validation error occured",
+                Detail = "please check the errors",
+                Extensions = errors,
+                Status = HttpStatusCode.BadRequest.GetHashCode()
+            },
+            Status = HttpStatusCode.BadRequest
+        };
+
+    }
+
+}
+
+public class ServiceResult<T> : ServiceResult
+{
+    public T? Data { get; set; }
+    public static ServiceResult<T> SuccessAsOk(T data)
+    {
+        return new ServiceResult<T>
+        {
+            Status = HttpStatusCode.OK,
+            Data = data
+        };
+    }
+    public static ServiceResult<T> SuccessAsCreated(T data)
+    {
+        return new ServiceResult<T>
+        {
+            Status = HttpStatusCode.OK,
+            Data = data
+        };
+    }
+    public new static ServiceResult<T> Error(ProblemDetails problemDetails, HttpStatusCode statusCode)
+    {
+        return new ServiceResult<T>()
+        {
+            Fail = problemDetails,
+            Status = statusCode
+        };
+        
+    }
+    public new static ServiceResult<T> Error(string title, string description, HttpStatusCode statusCode)
+    {
+        return new ServiceResult<T>()
+        {
+            Fail = new ProblemDetails
+            {
+                Title = title,
+                Detail = description,
+                Status = statusCode.GetHashCode()
+            },
+            Status = statusCode
+        };
+
+    }
+
 }

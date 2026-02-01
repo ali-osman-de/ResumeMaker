@@ -4,7 +4,7 @@ using ResumeMaker.Application.Interfaces;
 
 namespace ResumeMaker.Application.Features.Handlers;
 
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, ServiceResult<bool>>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, ServiceResult>
 {
     private readonly IUserService _userService;
 
@@ -13,9 +13,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Servi
         _userService = userService;
     }
 
-    public async Task<ServiceResult<bool>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<ServiceResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var result = await _userService.CreateUserAsync(request.userName, request.email, request.password, cancellationToken);
-        return result;
+        return await _userService.CreateUserAsync(request.userName, request.email, request.password, cancellationToken);
     }
 }

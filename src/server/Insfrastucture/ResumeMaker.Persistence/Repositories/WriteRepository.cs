@@ -1,5 +1,4 @@
-﻿using System.IO.Compression;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ResumeMaker.Application.Interfaces.Repositories;
 using ResumeMaker.Domain.Entities.Base;
 using ResumeMaker.Persistence.Context;

@@ -16,7 +16,6 @@ public class UpdateUserRefreshTokenCommandHandler : IRequestHandler<UpdateUserRe
 
     public async Task<ServiceResult<RefreshTokenInformationDto>> Handle(UpdateUserRefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var result = await _userService.RenewRefreshToken(request.RefreshToken, cancellationToken);
-        return result;
+        return await _userService.RenewRefreshToken(request.RefreshToken, cancellationToken);
     }
 }

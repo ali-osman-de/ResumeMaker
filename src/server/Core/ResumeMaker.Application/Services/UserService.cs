@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,7 @@ public class UserService : IUserService
         _configuration = configuration;
     }
 
-    public async Task<ServiceResult<bool>> CreateUserAsync(string userName, string email, string password, CancellationToken cancellationToken)
+    public async Task<ServiceResult> CreateUserAsync(string userName, string email, string password, CancellationToken cancellationToken)
     {
         IdentityResult result = await _userManager.CreateAsync(new()
         {
@@ -32,10 +33,10 @@ public class UserService : IUserService
 
         if (result.Succeeded)
         {
-            return ServiceResult<bool>.Success(true);
+            return ServiceResult.SuccessAsNoContent();
         }
 
-        return ServiceResult<bool>.Fail("Kullanıcı username veya email kullanımda!");
+        return ServiceResult.Error("Conflict", "Kullanıcı username veya email kullanımda!", HttpStatusCode.Conflict);
     }
 
     public async Task<ServiceResult<TokenInformationDto>> LoginUserAsync(string userNameOrEmail, string password, CancellationToken cancellationToken)
@@ -43,7 +44,10 @@ public class UserService : IUserService
         AppUser? appUser = await _userManager.FindByEmailAsync(userNameOrEmail);
         if (appUser == null) appUser = await _userManager.FindByNameAsync(userNameOrEmail);
 
-        if (appUser == null) return ServiceResult<TokenInformationDto>.Fail("Kullanıcı bulunamadı!");
+        if (appUser == null)
+        {
+            return ServiceResult<TokenInformationDto>.Error("Not Found", "Kullanıcı bulunamadı!", HttpStatusCode.NotFound);
+        }
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, password, false);
 
@@ -51,10 +55,10 @@ public class UserService : IUserService
         {
             TokenInformationDto tokenInformationDto = _tokenService.CreateAccessToken(appUser);
             await UpdateRefreshToken(tokenInformationDto.RefreshToken, appUser, tokenInformationDto.ExpirationDatetime, 15);
-            return ServiceResult<TokenInformationDto>.Success(tokenInformationDto);
+            return ServiceResult<TokenInformationDto>.SuccessAsOk(tokenInformationDto);
         }
 
-        return ServiceResult<TokenInformationDto>.Fail("hatalı şifre veya username", "GeçersizKimlik");
+        return ServiceResult<TokenInformationDto>.Error("Unauthorized", "hatalı şifre veya username", HttpStatusCode.Unauthorized);
     }
 
     public async Task<ServiceResult<RefreshTokenInformationDto>> RenewRefreshToken(string refreshToken, CancellationToken cancellation)
@@ -66,12 +70,10 @@ public class UserService : IUserService
             TokenInformationDto tokenInformationDto = _tokenService.CreateAccessToken(appUser);
             await UpdateRefreshToken(tokenInformationDto.RefreshToken, appUser, tokenInformationDto.ExpirationDatetime, double.Parse(_configuration["Token:AccessTokenExpiration"]!));
             refreshTokenInformationDto.RefreshToken = tokenInformationDto.RefreshToken;
-            return ServiceResult<RefreshTokenInformationDto>.Success(refreshTokenInformationDto);
+            return ServiceResult<RefreshTokenInformationDto>.SuccessAsOk(refreshTokenInformationDto);
         }
-        else
-        {
-            return ServiceResult<RefreshTokenInformationDto>.Fail( "UserBulunamadı veya Refresh Token süresi dolmuş", "RefreshTokenGeçersiz");
-        }
+
+        return ServiceResult<RefreshTokenInformationDto>.Error("Unauthorized", "UserBulunamadı veya Refresh Token süresi dolmuş", HttpStatusCode.Unauthorized);
     }
 
     public async Task UpdateRefreshToken(string refreshToken, AppUser appUser, DateTime accessTokenDate, double addOnAccessTokenDate)

@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ResumeMaker.API.Common;
+using ResumeMaker.API.Extensions;
 using ResumeMaker.Application.Features.Commands;
 using ResumeMaker.Application.Features.Commands.User;
 using ResumeMaker.Domain.Dtos;
@@ -19,25 +19,24 @@ namespace ResumeMaker.API.Controllers
         }
         
         [HttpPost]
-        public async Task<ActionResult<ServiceResult<bool>>> Register([FromBody] CreateUserCommand command)
+        public async Task<IActionResult> Register([FromBody] CreateUserCommand command)
         {
             var result = await _mediator.Send(command);
             return result.ToResult();
         }   
 
         [HttpPost]
-        [ProducesResponseType(typeof(ServiceResult<TokenInformationDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<ServiceResult<TokenInformationDto>>> Login([FromBody] LoginUserCommand command)
+        public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
         {
             var result = await _mediator.Send(command);
-            return result.ToResult();
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResult<RefreshTokenInformationDto>>> RefreshToken([FromBody] UpdateUserRefreshTokenCommand command)
+        public async Task<IActionResult> RefreshToken([FromBody] UpdateUserRefreshTokenCommand command)
         {
             var result = await _mediator.Send(command);
-            return result.ToResult();
+            return Ok(result);
         }
     }
 }

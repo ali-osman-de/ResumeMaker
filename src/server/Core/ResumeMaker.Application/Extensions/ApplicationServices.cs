@@ -14,7 +14,6 @@ public static class ApplicationServices
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IResumeService, ResumeService>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();

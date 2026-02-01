@@ -22,7 +22,7 @@ export class Client {
      * @param body (optional) 
      * @return OK
      */
-    register(body: CreateUserCommand | undefined): Promise<BooleanServiceResult> {
+    register(body: CreateUserCommand | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Auth/Register";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -33,7 +33,6 @@ export class Client {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
             }
         };
 
@@ -42,28 +41,26 @@ export class Client {
         });
     }
 
-    protected processRegister(response: Response): Promise<BooleanServiceResult> {
+    protected processRegister(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BooleanServiceResult;
-            return result200;
+            return;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<BooleanServiceResult>(null as any);
+        return Promise.resolve<void>(null as any);
     }
 
     /**
      * @param body (optional) 
      * @return OK
      */
-    login(body: LoginUserCommand | undefined): Promise<TokenInformationDtoServiceResult> {
+    login(body: LoginUserCommand | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Auth/Login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -74,7 +71,6 @@ export class Client {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
             }
         };
 
@@ -83,28 +79,26 @@ export class Client {
         });
     }
 
-    protected processLogin(response: Response): Promise<TokenInformationDtoServiceResult> {
+    protected processLogin(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TokenInformationDtoServiceResult;
-            return result200;
+            return;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<TokenInformationDtoServiceResult>(null as any);
+        return Promise.resolve<void>(null as any);
     }
 
     /**
      * @param body (optional) 
      * @return OK
      */
-    refreshToken(body: UpdateUserRefreshTokenCommand | undefined): Promise<RefreshTokenInformationDtoServiceResult> {
+    refreshToken(body: UpdateUserRefreshTokenCommand | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Auth/RefreshToken";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -115,7 +109,6 @@ export class Client {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
             }
         };
 
@@ -124,192 +117,20 @@ export class Client {
         });
     }
 
-    protected processRefreshToken(response: Response): Promise<RefreshTokenInformationDtoServiceResult> {
+    protected processRefreshToken(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as RefreshTokenInformationDtoServiceResult;
-            return result200;
+            return;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<RefreshTokenInformationDtoServiceResult>(null as any);
+        return Promise.resolve<void>(null as any);
     }
-
-    /**
-     * @param body (optional) 
-     * @return OK
-     */
-    createResumeSub(body: CreateResumeCommand | undefined): Promise<BooleanServiceResult> {
-        let url_ = this.baseUrl + "/api/Resume/CreateResumeSub";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processCreateResumeSub(_response);
-        });
-    }
-
-    protected processCreateResumeSub(response: Response): Promise<BooleanServiceResult> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BooleanServiceResult;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<BooleanServiceResult>(null as any);
-    }
-
-    /**
-     * @return OK
-     */
-    getAllResume(): Promise<ResumeDtoListServiceResult> {
-        let url_ = this.baseUrl + "/api/Resume/GetAllResume";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetAllResume(_response);
-        });
-    }
-
-    protected processGetAllResume(response: Response): Promise<ResumeDtoListServiceResult> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResumeDtoListServiceResult;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<ResumeDtoListServiceResult>(null as any);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return OK
-     */
-    updateResume(body: UpdateResumeCommand | undefined): Promise<BooleanServiceResult> {
-        let url_ = this.baseUrl + "/api/Resume/UpdateResume";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processUpdateResume(_response);
-        });
-    }
-
-    protected processUpdateResume(response: Response): Promise<BooleanServiceResult> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BooleanServiceResult;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<BooleanServiceResult>(null as any);
-    }
-
-    /**
-     * @param resumeSubId (optional) 
-     * @return OK
-     */
-    removeResume(resumeSubId: string | undefined): Promise<BooleanServiceResult> {
-        let url_ = this.baseUrl + "/api/Resume/RemoveResume?";
-        if (resumeSubId === null)
-            throw new Error("The parameter 'resumeSubId' cannot be null.");
-        else if (resumeSubId !== undefined)
-            url_ += "ResumeSubId=" + encodeURIComponent("" + resumeSubId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "POST",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRemoveResume(_response);
-        });
-    }
-
-    protected processRemoveResume(response: Response): Promise<BooleanServiceResult> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BooleanServiceResult;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<BooleanServiceResult>(null as any);
-    }
-}
-
-export interface BooleanServiceResult {
-    isSuccess?: boolean;
-    message?: string | undefined;
-    errors?: string[] | undefined;
-    data?: boolean;
-}
-
-export interface CreateResumeCommand {
-    resumeTitle?: string | undefined;
 }
 
 export interface CreateUserCommand {
@@ -321,49 +142,6 @@ export interface CreateUserCommand {
 export interface LoginUserCommand {
     userNameOrEmail?: string | undefined;
     password?: string | undefined;
-}
-
-export interface RefreshTokenInformationDto {
-    refreshToken?: string | undefined;
-}
-
-export interface RefreshTokenInformationDtoServiceResult {
-    isSuccess?: boolean;
-    message?: string | undefined;
-    errors?: string[] | undefined;
-    data?: RefreshTokenInformationDto;
-}
-
-export interface ResumeDto {
-    id?: string;
-    resumeTitle?: string | undefined;
-    companies?: string | undefined;
-}
-
-export interface ResumeDtoListServiceResult {
-    isSuccess?: boolean;
-    message?: string | undefined;
-    errors?: string[] | undefined;
-    data?: ResumeDto[] | undefined;
-}
-
-export interface TokenInformationDto {
-    accessToken?: string | undefined;
-    refreshToken?: string | undefined;
-    expirationDatetime?: Date;
-}
-
-export interface TokenInformationDtoServiceResult {
-    isSuccess?: boolean;
-    message?: string | undefined;
-    errors?: string[] | undefined;
-    data?: TokenInformationDto;
-}
-
-export interface UpdateResumeCommand {
-    resumeSubId?: string | undefined;
-    resumeTitle?: string | undefined;
-    companies?: string | undefined;
 }
 
 export interface UpdateUserRefreshTokenCommand {
