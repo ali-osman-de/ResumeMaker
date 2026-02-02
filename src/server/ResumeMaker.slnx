@@ -9,4 +9,10 @@
   <Folder Name="/Insfrastructure/">
     <Project Path="Insfrastucture/ResumeMaker.Persistence/ResumeMaker.Persistence.csproj" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="../../.env" />
+    <File Path="../../.gitattributes" />
+    <File Path="../../.gitignore" />
+    <File Path="../../docker-compose.yml" />
+  </Folder>
 </Solution>

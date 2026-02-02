@@ -12,12 +12,14 @@ namespace ResumeMaker.Application.Services;
 public class ResumeService : IResumeService
 {
     private readonly IWriteRepository<Resume> _resumeWriteRepository;
+    private readonly IReadRepository<Resume> _resumeReadRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ResumeService(IWriteRepository<Resume> resumeWriteRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public ResumeService(IWriteRepository<Resume> resumeWriteRepository, IReadRepository<Resume> resumeReadRepository, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _resumeWriteRepository = resumeWriteRepository;
+        _resumeReadRepository = resumeReadRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -39,6 +41,19 @@ public class ResumeService : IResumeService
         }
 
         return ServiceResult.SuccessAsNoContent();
+    }
+
+    public async Task<ServiceResult<List<SaveResumeDto>>> GetAllResumeByUserId(Guid userId, CancellationToken cancellationToken)
+    {
+        throw new Exception("hata");
+        //var resumes = _resumeReadRepository.Table.AsNoTracking().Where(x => x.UserId == userId).ToList();
+        //var mappedResumes = _mapper.Map<List<SaveResumeDto>>(resumes);
+        //return ServiceResult<List<SaveResumeDto>>.SuccessAsOk(mappedResumes);
+    }
+
+    public Task<ServiceResult<SaveResumeDto>> GetResumeByResumeId(Guid resumeId, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<ServiceResult> RemoveResume(Guid resumeId, CancellationToken cancellationToken)
@@ -63,6 +78,12 @@ public class ResumeService : IResumeService
         var resume = await _resumeWriteRepository.Table
             .Include(x => x.SkillCategories)
             .ThenInclude(x => x.TechnologyHubs)
+            .Include(y => y.JobsHistories)
+            .ThenInclude(y => y.JobDescriptions)
+            .Include(z => z.VolunteerInfos)
+            .ThenInclude(z => z.VolunteerDescriptions)
+            .Include(l => l.ProjectsInfos)
+            .ThenInclude(l => l.ProjectDefinitions)
             .FirstOrDefaultAsync(x => x.Id == resumeId, cancellationToken);
 
         if (resume == null)

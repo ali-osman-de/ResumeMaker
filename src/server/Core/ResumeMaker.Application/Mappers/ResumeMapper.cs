@@ -26,6 +26,7 @@ public class ResumeMapper : Profile
             .ForMember(dest => dest.EducationInfos, opt => opt.MapFrom(src => src.EducationInfoDtos))
             .ForMember(dest => dest.ProjectsInfos, opt => opt.MapFrom(src => src.ProjectsInfoDtos))
             .ForMember(dest => dest.CertificatesInfos, opt => opt.MapFrom(src => src.CertificatesInfoDtos))
+            .ForMember(dest => dest.VolunteerInfos, opt => opt.MapFrom(src => src.VolunteerInfoDtos))
             .AfterMap((_, dest) =>
             {
                 if (dest.CreatedAt == default)
@@ -80,17 +81,17 @@ public class ResumeMapper : Profile
                     certificate.Resume = dest;
                 }
 
-                if (dest.VolunteerInfos != null)
+
+                dest.VolunteerInfos ??= new List<VolunteerInfo>();
+                foreach (var volunteer in dest.VolunteerInfos)
                 {
-                    foreach (var volunteer in dest.VolunteerInfos)
+                    volunteer.Resume = dest;
+                    volunteer.VolunteerDescriptions ??= new List<VolunteerDescription>();
+                    foreach (var description in volunteer.VolunteerDescriptions)
                     {
-                        volunteer.Resume = dest;
-                        volunteer.VolunteerDescriptions ??= new List<VolunteerDescription>();
-                        foreach (var description in volunteer.VolunteerDescriptions)
-                        {
-                            description.VolunteerInfo = volunteer;
-                        }
+                        description.VolunteerInfo = volunteer;
                     }
+
                 }
             });
 
@@ -99,7 +100,8 @@ public class ResumeMapper : Profile
             .ForMember(dest => dest.JobHistoryDtos, opt => opt.MapFrom(src => src.JobsHistories))
             .ForMember(dest => dest.EducationInfoDtos, opt => opt.MapFrom(src => src.EducationInfos))
             .ForMember(dest => dest.ProjectsInfoDtos, opt => opt.MapFrom(src => src.ProjectsInfos))
-            .ForMember(dest => dest.CertificatesInfoDtos, opt => opt.MapFrom(src => src.CertificatesInfos));
+            .ForMember(dest => dest.CertificatesInfoDtos, opt => opt.MapFrom(src => src.CertificatesInfos))
+            .ForMember(dest => dest.VolunteerInfoDtos, opt => opt.MapFrom(src => src.VolunteerInfos));
 
         CreateMap<SkillCategoryDto, SkillCategory>()
             .ForMember(dest => dest.TechnologyHubs, opt => opt.MapFrom(src => src.Skills));

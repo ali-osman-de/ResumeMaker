@@ -18,6 +18,7 @@ public class Resume : CoreEntity
     public string? GithubLink { get; set; }
     public string? LinkedinLink { get; set; }
     public string? Autobiography { get; set; }
+    public AppUser AppUser { get; set; }
     public ICollection<SkillCategory>? SkillCategories { get; set; }
     public ICollection<JobsHistory>? JobsHistories { get; set; }
     public ICollection<EducationInfo>? EducationInfos { get; set; }
