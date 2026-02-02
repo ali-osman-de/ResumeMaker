@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeMaker.API.Extensions;
 using ResumeMaker.Application.Features.Commands.Resume;
+using ResumeMaker.Application.Features.Queries.Resume;
 
 namespace ResumeMaker.API.Controllers
 {
@@ -36,6 +37,17 @@ namespace ResumeMaker.API.Controllers
             var result = await _mediator.Send(command);
             return result.ToResult();
         }   
-
+        [HttpGet]
+        public async Task<IActionResult> GetAllResumeByUserId([FromQuery] string userId)
+        {
+            var result = await _mediator.Send(new GetAllResumeByUserIdQuery(userId));
+            return result.ToResult();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetResumeByResumeId([FromQuery] Guid resumeId)
+        {
+            var result = await _mediator.Send(new GetResumeByResumeIdQuery(resumeId));
+            return result.ToResult();
+        }
     }
 }

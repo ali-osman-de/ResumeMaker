@@ -8,5 +8,5 @@ public class ProjectsInfo : CoreEntity
     public string Link { get; set; }
     public Guid ResumeId { get; set; }
     public Resume Resume { get; set; }
-    public ICollection<ProjectDefinitions> ProjectDefinitions { get; set; }
+    public ICollection<ProjectDefinitions> ProjectDefinitions { get; set; } = new List<ProjectDefinitions>();
 }

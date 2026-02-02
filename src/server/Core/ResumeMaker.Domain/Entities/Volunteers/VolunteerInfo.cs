@@ -9,5 +9,5 @@ public class VolunteerInfo : CoreEntity
     public int Year { get; set; }
     public Guid ResumeId { get; set; }
     public Resume Resume { get; set; }
-    public ICollection<VolunteerDescription>? VolunteerDescriptions { get; set; }
+    public ICollection<VolunteerDescription> VolunteerDescriptions { get; set; } = new List<VolunteerDescription>();
 }

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ResumeMaker.Domain.Entities.Base;
 using ResumeMaker.Domain.Entities.Certificates;
 using ResumeMaker.Domain.Entities.Educations;
@@ -18,11 +19,11 @@ public class Resume : CoreEntity
     public string? GithubLink { get; set; }
     public string? LinkedinLink { get; set; }
     public string? Autobiography { get; set; }
-    public AppUser AppUser { get; set; }
-    public ICollection<SkillCategory>? SkillCategories { get; set; }
-    public ICollection<JobsHistory>? JobsHistories { get; set; }
-    public ICollection<EducationInfo>? EducationInfos { get; set; }
-    public ICollection<ProjectsInfo>? ProjectsInfos { get; set; }
-    public ICollection<VolunteerInfo>? VolunteerInfos { get; set; }
-    public ICollection<CertificatesInfo>? CertificatesInfos { get; set; }
+    public string AppUserId { get; set; }
+    public ICollection<SkillCategory> SkillCategories { get; set; } = new List<SkillCategory>();
+    public ICollection<JobsHistory> JobsHistories { get; set; } = new List<JobsHistory>();
+    public ICollection<EducationInfo> EducationInfos { get; set; } = new List<EducationInfo>();
+    public ICollection<ProjectsInfo> ProjectsInfos { get; set; } = new List<ProjectsInfo>();
+    public ICollection<VolunteerInfo> VolunteerInfos { get; set; } = new List<VolunteerInfo>();
+    public ICollection<CertificatesInfo> CertificatesInfos { get; set; } = new List<CertificatesInfo>();
 }

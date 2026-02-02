@@ -17,10 +17,10 @@ public class SaveResumeDto
     public string? GithubLink { get; set; }
     public string? LinkedinLink { get; set; }
     public string? Autobiography { get; set; }
-    public List<SkillCategoryDto>? SkillCategoryDtos { get; set; }
-    public List<JobHistoryDto>? JobHistoryDtos { get; set; }
-    public List<EducationInfoDto>? EducationInfoDtos { get; set; }
-    public List<ProjectsInfoDto>? ProjectsInfoDtos { get; set; }
-    public List<VolunteerInfoDto>? VolunteerInfoDtos { get; set; }
-    public List<CertificatesInfoDto>? CertificatesInfoDtos { get; set; }
+    public List<SkillCategoryDto> SkillCategoryDtos { get; set; } = new();
+    public List<JobHistoryDto> JobHistoryDtos { get; set; } = new();
+    public List<EducationInfoDto> EducationInfoDtos { get; set; } = new();
+    public List<ProjectsInfoDto> ProjectsInfoDtos { get; set; } = new();
+    public List<VolunteerInfoDto> VolunteerInfoDtos { get; set; } = new();
+    public List<CertificatesInfoDto> CertificatesInfoDtos { get; set; } = new();
 }

@@ -15,18 +15,32 @@ public class ResumeService : IResumeService
     private readonly IReadRepository<Resume> _resumeReadRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly ICurrentUserService _currentUserService;
 
-    public ResumeService(IWriteRepository<Resume> resumeWriteRepository, IReadRepository<Resume> resumeReadRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public ResumeService(
+        IWriteRepository<Resume> resumeWriteRepository,
+        IReadRepository<Resume> resumeReadRepository,
+        IUnitOfWork unitOfWork,
+        IMapper mapper,
+        ICurrentUserService currentUserService)
     {
         _resumeWriteRepository = resumeWriteRepository;
         _resumeReadRepository = resumeReadRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _currentUserService = currentUserService;
     }
 
     public async Task<ServiceResult> CreateResume(SaveResumeDto saveResumeDto, CancellationToken cancellationToken)
     {
         var resume = _mapper.Map<Resume>(saveResumeDto);
+        var userId = _currentUserService.UserId;
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return ServiceResult.Error("Unauthorized", "Kullanıcı bulunamadı.", HttpStatusCode.Unauthorized);
+        }
+
+        resume.AppUserId = userId;
 
         var added = await _resumeWriteRepository.AddAsync(resume, cancellationToken);
         if (!added)
@@ -43,17 +57,20 @@ public class ResumeService : IResumeService
         return ServiceResult.SuccessAsNoContent();
     }
 
-    public async Task<ServiceResult<List<SaveResumeDto>>> GetAllResumeByUserId(Guid userId, CancellationToken cancellationToken)
+    public async Task<ServiceResult<List<ResumeSummaryDto>>> GetAllResumeByUserId(string userId, CancellationToken cancellationToken)
     {
-        throw new Exception("hata");
-        //var resumes = _resumeReadRepository.Table.AsNoTracking().Where(x => x.UserId == userId).ToList();
-        //var mappedResumes = _mapper.Map<List<SaveResumeDto>>(resumes);
-        //return ServiceResult<List<SaveResumeDto>>.SuccessAsOk(mappedResumes);
+        var resumes = _resumeReadRepository.Table.AsNoTracking()
+            .Where(x => x.AppUserId == userId)
+            .ToList();
+        var mappedResumes = _mapper.Map<List<ResumeSummaryDto>>(resumes);
+        return ServiceResult<List<ResumeSummaryDto>>.SuccessAsOk(mappedResumes);
     }
 
-    public Task<ServiceResult<SaveResumeDto>> GetResumeByResumeId(Guid resumeId, CancellationToken cancellationToken)
+    public async Task<ServiceResult<SaveResumeDto>> GetResumeByResumeId(Guid resumeId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var resume = await _resumeReadRepository.Table.FirstOrDefaultAsync(x => x.Id == resumeId);
+        var mappedResume = _mapper.Map<SaveResumeDto>(resume);
+        return ServiceResult<SaveResumeDto>.SuccessAsOk(mappedResume);
     }
 
     public async Task<ServiceResult> RemoveResume(Guid resumeId, CancellationToken cancellationToken)

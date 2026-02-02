@@ -5,9 +5,9 @@ using ResumeMaker.Domain.Dtos;
 
 namespace ResumeMaker.Application.Features.Handlers.Resume;
 
-public class GetAllResumeByUserIdQueryHandler(IResumeService resumeService) : IRequestHandler<GetAllResumeByUserIdQuery, ServiceResult<List<SaveResumeDto>>>
+public class GetAllResumeByUserIdQueryHandler(IResumeService resumeService) : IRequestHandler<GetAllResumeByUserIdQuery, ServiceResult<List<ResumeSummaryDto>>>
 {
-    public async Task<ServiceResult<List<SaveResumeDto>>> Handle(GetAllResumeByUserIdQuery request, CancellationToken cancellationToken)
+    public async Task<ServiceResult<List<ResumeSummaryDto>>> Handle(GetAllResumeByUserIdQuery request, CancellationToken cancellationToken)
     {
         return await resumeService.GetAllResumeByUserId(request.userId, cancellationToken);
     }

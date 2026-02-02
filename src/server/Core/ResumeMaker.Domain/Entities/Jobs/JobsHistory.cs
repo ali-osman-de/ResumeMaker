@@ -9,5 +9,5 @@ public class JobsHistory : CoreEntity
     public string Company { get; set; }
     public Guid ResumeId { get; set; }
     public Resume Resume { get; set; }
-    public ICollection<JobDescription> JobDescriptions { get; set; }
+    public ICollection<JobDescription> JobDescriptions { get; set; } = new List<JobDescription>();
 }

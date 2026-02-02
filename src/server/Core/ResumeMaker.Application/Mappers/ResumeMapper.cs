@@ -96,12 +96,12 @@ public class ResumeMapper : Profile
             });
 
         CreateMap<Resume, SaveResumeDto>()
-            .ForMember(dest => dest.SkillCategoryDtos, opt => opt.MapFrom(src => src.SkillCategories))
-            .ForMember(dest => dest.JobHistoryDtos, opt => opt.MapFrom(src => src.JobsHistories))
-            .ForMember(dest => dest.EducationInfoDtos, opt => opt.MapFrom(src => src.EducationInfos))
-            .ForMember(dest => dest.ProjectsInfoDtos, opt => opt.MapFrom(src => src.ProjectsInfos))
-            .ForMember(dest => dest.CertificatesInfoDtos, opt => opt.MapFrom(src => src.CertificatesInfos))
-            .ForMember(dest => dest.VolunteerInfoDtos, opt => opt.MapFrom(src => src.VolunteerInfos));
+            .ForMember(dest => dest.SkillCategoryDtos, opt => opt.MapFrom(src => src.SkillCategories ?? new List<SkillCategory>()))
+            .ForMember(dest => dest.JobHistoryDtos, opt => opt.MapFrom(src => src.JobsHistories ?? new List<JobsHistory>()))
+            .ForMember(dest => dest.EducationInfoDtos, opt => opt.MapFrom(src => src.EducationInfos ?? new List<EducationInfo>()))
+            .ForMember(dest => dest.ProjectsInfoDtos, opt => opt.MapFrom(src => src.ProjectsInfos ?? new List<ProjectsInfo>()))
+            .ForMember(dest => dest.CertificatesInfoDtos, opt => opt.MapFrom(src => src.CertificatesInfos ?? new List<CertificatesInfo>()))
+            .ForMember(dest => dest.VolunteerInfoDtos, opt => opt.MapFrom(src => src.VolunteerInfos ?? new List<VolunteerInfo>()));
 
         CreateMap<SkillCategoryDto, SkillCategory>()
             .ForMember(dest => dest.TechnologyHubs, opt => opt.MapFrom(src => src.Skills));
@@ -130,6 +130,8 @@ public class ResumeMapper : Profile
         CreateMap<VolunteerInfo, VolunteerInfoDto>()
             .ForMember(dest => dest.VolunteerDescriptionDtos, opt => opt.MapFrom(src => src.VolunteerDescriptions));
         CreateMap<VolunteerDescriptionDto, VolunteerDescription>().ReverseMap();
+
+        CreateMap<Resume, ResumeSummaryDto>().ReverseMap();
     }
 
 }
