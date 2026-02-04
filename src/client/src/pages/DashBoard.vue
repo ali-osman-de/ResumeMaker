@@ -29,7 +29,7 @@
         <div class="grid gap-4 md:grid-cols-2">
           <article
             v-for="resume in resumes"
-            :key="resume.id"
+            :key="resume.id ?? `${resume.email}-${resume.name}`"
             class="group relative overflow-hidden rounded-2xl border border-[#1E293B] bg-gradient-to-b from-[#15172b] to-[#0f1b2d] p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.9)] transition hover:-translate-y-0.5 hover:border-[#6e5ef7]/40 hover:shadow-[0_24px_60px_-30px_rgba(110,94,247,0.35)]"
           >
             <div
@@ -60,29 +60,20 @@
                 <div
                   class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#6e5ef7] to-[#22D3EE] text-white shadow-[0_0_20px_rgba(110,94,247,0.35)]"
                 >
-                  <span class="material-symbols-outlined text-[22px]">{{ resume.icon }}</span>
+                  <span class="material-symbols-outlined text-[22px]">description</span>
                 </div>
                 <div>
-                  <p class="text-xs uppercase tracking-[0.08em] text-white/60">{{ resume.subtitle }}</p>
-                  <p class="text-base font-semibold">{{ resume.title }}</p>
+                  <p class="text-xs uppercase tracking-[0.08em] text-white/60">Özgeçmiş</p>
+                  <p class="text-base font-semibold">{{ resume.name }} {{ resume.surname }}</p>
                 </div>
               </div>
               <span class="rounded-full border border-[#1E293B] bg-[#0F1B2D] px-3 py-1 text-[11px] font-semibold text-white/70">
-                {{ resume.updated }}
+                {{ resume.email }}
               </span>
             </header>
 
-            <div class="mt-4 space-y-3">
-              <div class="h-2 w-full overflow-hidden rounded-full bg-[#1E293B]">
-                <div
-                  class="h-full rounded-full bg-gradient-to-r from-[#6e5ef7] to-[#22D3EE]"
-                  :style="`width: ${resume.progress}%`"
-                ></div>
-              </div>
-              <div class="flex items-center justify-between text-xs text-white/60">
-                <span>{{ resume.progress }}% Profil Gücü</span>
-                <span>{{ resume.strengthLabel }}</span>
-              </div>
+            <div class="mt-4 text-xs text-white/60">
+              {{ resume.id }}
             </div>
           </article>
         </div>
@@ -92,25 +83,38 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
+import { resumeStore } from "@/stores/resumeStore";
 
-const resumes = [
-  {
-    id: 1,
-    title: "UX Designer Portfolio",
-    subtitle: "Behance / Portfolio",
-    updated: "Dün güncellendi",
-    progress: 65,
-    strengthLabel: "Taslak hazır",
-    icon: "color_lens",
-  },
-  {
-    id: 2,
-    title: "Full Stack Developer",
-    subtitle: "LinkedIn / Github",
-    updated: "2 gün önce",
-    progress: 82,
-    strengthLabel: "Mülakat modunda",
-    icon: "terminal",
-  },
-];
+const store = resumeStore();
+const resumes = store.resumes;
+
+function decodeBase64Url(value: string) {
+  const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(normalized.length + (4 - (normalized.length % 4)) % 4, "=");
+  return atob(padded);
+}
+
+function getUserIdFromToken(): string | null {
+  const token = localStorage.getItem("access_token");
+  if (!token) return null;
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  try {
+    const payload = JSON.parse(decodeBase64Url(parts[1]));
+    return (
+      payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] ||
+      payload.sub ||
+      null
+    );
+  } catch {
+    return null;
+  }
+}
+
+onMounted(async () => {
+  const userId = getUserIdFromToken();
+  if (!userId) return;
+  await store.getAllResumeByUserId(userId);
+});
 </script>
