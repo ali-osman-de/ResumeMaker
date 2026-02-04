@@ -57,11 +57,11 @@ public class ResumeService : IResumeService
         return ServiceResult.SuccessAsNoContent();
     }
 
-    public async Task<ServiceResult<List<ResumeSummaryDto>>> GetAllResumeByUserId(string userId, CancellationToken cancellationToken)
+    public async Task<ServiceResult<List<ResumeSummaryDto>>> GetAllResumeByUserId(CancellationToken cancellationToken)
     {
-        var resumes = _resumeReadRepository.Table.AsNoTracking()
-            .Where(x => x.AppUserId == userId)
-            .ToList();
+        var resumes = await _resumeReadRepository.Table.AsNoTracking()
+            .Where(x => x.AppUserId == _currentUserService.UserId)
+            .ToListAsync(cancellationToken);
         var mappedResumes = _mapper.Map<List<ResumeSummaryDto>>(resumes);
         return ServiceResult<List<ResumeSummaryDto>>.SuccessAsOk(mappedResumes);
     }

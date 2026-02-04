@@ -2,13 +2,14 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { type ResumeCreateCommand, type ResumeUpdateCommand, type ResumeRemoveCommand, type SaveResumeDto } from "@/metadata";
 import { parseServiceResultResponse } from "@/helpers/errorHandler";
+import { getAuthHeaders } from "@/helpers/auth";
 import { useLoader } from "@/helpers/loader";
 
 type ResumeSummaryDto = {
-    id?: string;
-    name?: string;
-    surname?: string;
-    email?: string;
+    id: string;
+    name: string;
+    surname: string;
+    email: string;
 };
 
 export const resumeStore = defineStore("resume", () => {
@@ -18,22 +19,17 @@ export const resumeStore = defineStore("resume", () => {
     const { loading, error, success, startLoading, stopLoading, setError, setSuccess } = useLoader();
     const baseUrl = import.meta.env.VITE_BASE_URL ?? "";
 
-    function authHeaders() {
-        const token = localStorage.getItem("access_token");
-        return token ? { Authorization: `Bearer ${token}` } : {};
-    }
-
     async function createResume(command: ResumeCreateCommand) {
         startLoading();
         setError(null);
         try {
             const response = await fetch(`${baseUrl}/api/Resume/CreateResume`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", ...authHeaders() },
+                headers: { "Content-Type": "application/json", ...getAuthHeaders() },
                 body: JSON.stringify(command)
             });
 
-            const result = await parseServiceResultResponse<unknown>(response);
+            const result = await parseServiceResultResponse<void>(response);
             if (result.error) {
                 setError(result.error);
                 throw new Error(result.error);
@@ -55,7 +51,7 @@ export const resumeStore = defineStore("resume", () => {
         try {
             const response = await fetch(`${baseUrl}/api/Resume/UpdateResume`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json", ...authHeaders() },
+                headers: { "Content-Type": "application/json", ...getAuthHeaders() },
                 body: JSON.stringify(command)
             });
 
@@ -82,11 +78,11 @@ export const resumeStore = defineStore("resume", () => {
         try {
             const response = await fetch(`${baseUrl}/api/Resume/RemoveResume`, {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json", ...authHeaders() },
+                headers: { "Content-Type": "application/json", ...getAuthHeaders() },
                 body: JSON.stringify(command)
             });
 
-            const result = await parseServiceResultResponse<unknown>(response);
+            const result = await parseServiceResultResponse<void>(response);
             if (result.error) {
                 setError(result.error);
                 throw new Error(result.error);
@@ -102,13 +98,13 @@ export const resumeStore = defineStore("resume", () => {
         }
     }
 
-    async function getAllResumeByUserId(userId: string) {
+    async function getAllResumeByUserId() {
         startLoading();
         setError(null);
         try {
-            const response = await fetch(`${baseUrl}/api/Resume/GetAllResumeByUserId?userId=${encodeURIComponent(userId)}`, {
+            const response = await fetch(`${baseUrl}/api/Resume/GetAllResumeByUserId`, {
                 method: "GET",
-                headers: { ...authHeaders() }
+                headers: { ...getAuthHeaders() }
             });
 
             const result = await parseServiceResultResponse<ResumeSummaryDto[]>(response);
@@ -133,7 +129,7 @@ export const resumeStore = defineStore("resume", () => {
         try {
             const response = await fetch(`${baseUrl}/api/Resume/GetResumeByResumeId?resumeId=${encodeURIComponent(resumeId)}`, {
                 method: "GET",
-                headers: { ...authHeaders() }
+                headers: { ...getAuthHeaders() }
             });
 
             const result = await parseServiceResultResponse<SaveResumeDto>(response);

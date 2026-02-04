@@ -38,9 +38,9 @@ namespace ResumeMaker.API.Controllers
             return result.ToResult();
         }   
         [HttpGet]
-        public async Task<IActionResult> GetAllResumeByUserId([FromQuery] string userId)
+        public async Task<IActionResult> GetAllResumeByUserId()
         {
-            var result = await _mediator.Send(new GetAllResumeByUserIdQuery(userId));
+            var result = await _mediator.Send(new GetAllResumeByUserIdQuery());
             return result.ToResult();
         }
         [HttpGet]

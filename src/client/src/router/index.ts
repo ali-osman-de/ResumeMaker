@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { getAccessToken } from "@/helpers/auth";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -31,7 +32,7 @@ const router = createRouter({
 });
 
 function isAuthenticated(): boolean {
-  return !!localStorage.getItem("access_token");
+  return !!getAccessToken();
 }
 
 router.beforeEach((to) => {

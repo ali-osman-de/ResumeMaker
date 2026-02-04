@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { type CreateUserCommand, type LoginUserCommand } from "@/metadata";
 import { parseServiceResultResponse } from "@/helpers/errorHandler";
 import { useLoader } from "@/helpers/loader";
+import { setTokens } from "@/helpers/auth";
 
 type TokenInformationDto = {
     accessToken?: string;
@@ -41,8 +42,7 @@ export const authStore = defineStore("auth", () => {
                 throw new Error();
             }
 
-            localStorage.setItem("access_token", data.accessToken);
-            if (data.refreshToken) localStorage.setItem("refresh_token", data.refreshToken);
+            setTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken ?? null });
             userLoginInformation.value = data;
             setSuccess("Giriş başarılı.");
             return data;

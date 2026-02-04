@@ -9,6 +9,6 @@ public class GetAllResumeByUserIdQueryHandler(IResumeService resumeService) : IR
 {
     public async Task<ServiceResult<List<ResumeSummaryDto>>> Handle(GetAllResumeByUserIdQuery request, CancellationToken cancellationToken)
     {
-        return await resumeService.GetAllResumeByUserId(request.userId, cancellationToken);
+        return await resumeService.GetAllResumeByUserId(cancellationToken);
     }
 }
